@@ -77,8 +77,8 @@ public class JapaneseTokenizer extends Tokenizer {
     int end = c.length;
     // TO: skip space. tab and new line.
     // This function should be moved into Processor.
-//    int begin2 = skipCharClass(c, begin, end, SPACE, char_class);
-    int begin2 = begin;
+    int begin2 = skipCharClass(c, begin, end, SPACE, char_class);
+//    int begin2 = begin;
     if (begin2 == end) {
       // return null when all of remain characters are skipped
       // characters.
