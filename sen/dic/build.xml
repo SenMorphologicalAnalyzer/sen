@@ -102,6 +102,7 @@
         <pathelement location="../build"/>
         <pathelement path="${java.class.path}"/>
       </classpath>
+      <jvmarg line="-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog -Dorg.apache.commons.logging.simplelog.log.net.java=info"/>
        <!-- Comment out if you would like to add your custom dictionary.
             Custom dictionary format have to compatibule with 'dic.csv'.
             This parameter is a file path for custom dictionary. 
