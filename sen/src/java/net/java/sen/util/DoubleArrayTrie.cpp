@@ -150,7 +150,7 @@ public  class DoubleArrayTrie {
     }
 
     int fetch (Node parent, 
-               Vector children)
+               Vector siblings)
     {
         ArrayType prev = 0;
         if(log.isTraceEnabled()) {
@@ -177,30 +177,30 @@ public  class DoubleArrayTrie {
                 throw new RuntimeException("Fatal: given strings are not sorted.\n");
             }
 
-            if (cur != prev || children.size() == 0) {
+            if (cur != prev || siblings.size() == 0) {
                 Node tmp_node = new Node();
                 tmp_node.depth = parent.depth + 1;
                 tmp_node.code  = cur;
                 tmp_node.left  = i;
-                if (children.size() != 0) 
-                    ((Node)children.get(children.size()-1)).right = i;
+                if (siblings.size() != 0) 
+                    ((Node)siblings.get(siblings.size()-1)).right = i;
 	  
-                children.add(tmp_node);
+                siblings.add(tmp_node);
             }
 
             prev = cur;
         }
 
-        if (children.size() != 0)
-            ((Node)children.get(children.size()-1)).right = parent.right;
+        if (siblings.size() != 0)
+            ((Node)siblings.get(siblings.size()-1)).right = parent.right;
 
-        return children.size();
+        return siblings.size();
     }
 
-    int insert (Vector children)
+    int insert (Vector siblings)
     {
         int begin       = 0;
-        int pos         = _max (((Node)children.get(0)).code + 1, 
+        int pos         = _max (((Node)siblings.get(0)).code + 1, 
                                 (ArrayType)next_check_pos) - 1;
         int nonzero_num = 0;
         int first       = 0;
@@ -217,16 +217,16 @@ public  class DoubleArrayTrie {
                 first = 1;
             }
 
-            begin = pos - ((Node)children.get(0)).code;
+            begin = pos - ((Node)siblings.get(0)).code;
 
-            _check_size(begin + ((Node)children.get(children.size()-1)).code);
+            _check_size(begin + ((Node)siblings.get(siblings.size()-1)).code);
 
             if (used[begin]!=0) continue;
 
             boolean flag = false;
 
-            for (int i = 1; i < children.size(); i++) {
-                if (check(begin + ((Node)children.get(i)).code) != 0) {
+            for (int i = 1; i < siblings.size(); i++) {
+                if (check(begin + ((Node)siblings.get(i)).code) != 0) {
                     flag = true;
                     break;
                 }
@@ -242,29 +242,29 @@ public  class DoubleArrayTrie {
         used[begin] = 1;
         size = _max (size, 
                      (int)begin + 
-                     ((Node)children.get(children.size()-1)).code + 1);
-        for (int i = 0; i < children.size(); i++) {
-            check (begin + ((Node)children.get(i)).code) = begin;
+                     ((Node)siblings.get(siblings.size()-1)).code + 1);
+        for (int i = 0; i < siblings.size(); i++) {
+            check (begin + ((Node)siblings.get(i)).code) = begin;
         }
 
-        for (int i = 0; i < children.size(); i++) {
-            Vector new_children = new Vector();
+        for (int i = 0; i < siblings.size(); i++) {
+            Vector new_siblings = new Vector();
     
-            if (fetch(((Node)children.get(i)), new_children)==0) {
-                base (begin + (int)((Node)children.get(i)).code) = 
+            if (fetch(((Node)siblings.get(i)), new_siblings)==0) {
+                base (begin + (int)((Node)siblings.get(i)).code) = 
                     (val!=null) ? 
-                    (DartsInt)(-val[((Node)children.get(i)).left]-1) 
-                    : (DartsInt)(-((Node)children.get(i)).left-1);
+                    (DartsInt)(-val[((Node)siblings.get(i)).left]-1) 
+                    : (DartsInt)(-((Node)siblings.get(i)).left-1);
 		
                 if ((val != null) && 
-                    ((DartsInt)(-val[((Node)children.get(i)).left]-1) >= 0)) {
+                    ((DartsInt)(-val[((Node)siblings.get(i)).left]-1) >= 0)) {
                     log.error("negative value is assgined.");
                     throw new RuntimeException("Fatal: negative value is assgined.");
                 }
 
             } else {
-                int ins = (int)insert(new_children);
-                base(begin + ((Node)children.get(i)).code) = ins;
+                int ins = (int)insert(new_siblings);
+                base(begin + ((Node)siblings.get(i)).code) = ins;
             }
         }
 
@@ -333,11 +333,11 @@ public  class DoubleArrayTrie {
         root_node.right = str_size;
         root_node.depth = 0;
 
-        Vector children = new Vector();
+        Vector siblings = new Vector();
         log.trace("---fetch---");
-        fetch (root_node, children);
+        fetch (root_node, siblings);
         log.trace("---insert---");
-        insert (children);
+        insert (siblings);
 
         used  = null;
 
@@ -388,14 +388,23 @@ public  class DoubleArrayTrie {
             if ((ArrayType) b == check(p) && n < 0) {
                 if(log.isTraceEnabled())
                     log.trace("result["+num+"]="+(-n-1));
-                result[num++] = -n-1;
-                if(num==result.length) {
-                    log.warn("result array size may not enough");
-                    return num;
-                }
+                  if (num < result.length) {
+                	result[num] = -n-1;
+                  } else {
+                     log.warn("result array size may not enough");                	
+                  }
+                  num++;
             }
 
             p = b + (NodeType)(key[i]) + 1;
+
+            // following lines are temporary code to resolve OutOfArrayException.
+            // TODO:fixme
+            if ( (p<<1) > array.length) {
+              return num;
+            }
+            // end of temporary code.
+          
             if ((ArrayType) b == check(p)) {
                 b = base(p);
             } else {
@@ -408,11 +417,12 @@ public  class DoubleArrayTrie {
         if ((ArrayType)b == check(p) && n < 0) {
             if(log.isTraceEnabled())
                 log.trace("result["+num+"]="+(-n-1));
-            result[num++] = (-n-1);
-            if(num==result.length) {
-                log.warn("result array size may not enough");
-                return num;
+            if (num < result.length) {
+              result[num] = -n-1;
+            } else {
+              log.warn("result array size may not enough");                	
             }
+            num++;
         }
 
         return num;
@@ -430,6 +440,7 @@ public  class DoubleArrayTrie {
         log.info("save time = " + 
                  (((double)(System.currentTimeMillis()- start))/1000) + "[s]");
     }
+
 
     // for debug 
     public static void dumpChar(char c[],String message) {
