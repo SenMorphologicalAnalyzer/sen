@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!--
+  usage:
+  if you need proxy to access ftp site, try following:
+
+  $ ant -Dproxy.host=proxy.hoehoe.jp -Dproxy.port=8080
+
+-->
+<project name="ipadic" default="create" basedir=".">
+
+  <property name="perl.bin" value="c:/usr/cygwin/bin/perl.exe"/>
+<!---
+  <property name="perl.bin" value="/usr/bin/perl"/>
+-->
+  <property name="ipadic2tng"  value="./ipadic2tng.pl"/>
+  <property name="ipadic.home" value="http://chasen.aist-nara.ac.jp/stable/ipadic"/>
+  <property name="ipadic.version" value="2.5.0"/>
+  <property name="ipadic.archive"  value="ipadic-${ipadic.version}.tar.gz"/>
+  <property name="ipadic.dir"  value="ipadic-${ipadic.version}"/>
+
+  <property name="build.lib" location="build/lib"/>
+  <property name="lib.dir" location="lib"/>
+  <property name="commons-logging.jar" value="../lib/commons-logging.jar"/>
+  <property name="commons-logging-api.jar" value="../lib/commons-logging-api.jar"/>
+  <property name="sen.jar" value="../build/lib/sen.jar"/>
+  <property name="proxy.port" value="80" />
+
+  <target name="prepare-proxy" if="proxy.host">
+    <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" />
+  </target>
+
+  <target name="prepare-archive">
+    <available file="${ipadic.archive}" property="ipadic.archive.present"/>
+  </target>
+
+  <target name="prepare-dics">
+    <condition property="dics.present">
+      <and>
+        <available file="da.cha"/>
+        <available file="matrix.cha"/>
+        <available file="morphemeInfo.cha"/>
+        <available file="token.cha"/>
+      </and>
+    </condition>
+  </target>
+
+  <target name="prepare-dics0">
+    <condition property="dics0.present">
+      <and>
+        <available file="dic.cha"/>
+        <available file="connect.cha"/>
+      </and>
+    </condition>
+  </target>
+
+  <target name="prepare" depends="prepare-proxy,prepare-archive,prepare-dics0,prepare-dics" unless="ipadic.archive.present">
+<!--
+    <exec executable="wget">
+      <arg line="${ipadic.home}/${ipadic.archive}"/>
+    </exec>
+-->
+
+<!--
+    for proxy
+    <setproxy socksproxyhost="proxyhost" proxyport="8080" />
+-->
+    <get src="${ipadic.home}/${ipadic.archive}" dest="${ipadic.archive}" />
+    <gunzip src="${ipadic.archive}"/>
+    <untar src="${ipadic.dir}.tar" dest="." />
+    <delete file="${ipadic.dir}.tar"/>
+  </target>
+
+  <target name="clean">
+    <delete>
+      <fileset dir="." includes="*.cha"/>
+    </delete>
+    <delete dir="ipadic-${ipadic.version}"/>
+    <delete file="${ipadic.archive}" />
+  </target>
+
+  <target name="dics0" depends="prepare" unless="dics0.present">
+    <exec executable="${perl.bin}">
+      <arg line="${ipadic2tng} ipadic-${ipadic.version}"/>
+    </exec>
+  </target>
+
+  <target name="create" depends="dics0" unless="dics.present">
+    <java classname="net.java.sen.tools.MkChaDic"
+          fork="true"
+          maxmemory="140m">
+      <classpath>
+        <pathelement location="${sen.jar}"/>
+        <pathelement location="${commons-logging.jar}"/>
+        <pathelement location="${commons-logging-api.jar}"/>
+        <pathelement location="."/>
+        <pathelement location="../build"/>
+        <pathelement path="${java.class.path}"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="all" depends="clean,prepare,create"/>
+
+</project>
+
