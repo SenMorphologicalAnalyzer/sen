@@ -320,7 +320,7 @@ public class DoubleArrayTrie {
 
 
 
-      if(key[i]=='\n'||key[i]=='\r')continue;
+
 
       p = b;
       n = array[((int)p) << 1];

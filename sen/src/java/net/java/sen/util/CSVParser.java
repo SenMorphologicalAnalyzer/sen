@@ -1,8 +1,7 @@
 /*
  * CSVParser.java - CSVParser implementation in Java.
  * 
- * Copyright (C) 2001, 2002 Taku Kudoh, Takashi Okamoto
- * Taku Kudoh <taku-ku@is.aist-nara.ac.jp>
+ * Copyright (C) 2001, 2002 Takashi Okamoto
  * Takashi Okamoto <tora@debian.org>
  *
  * This library is free software; you can redistribute it and/or modify it under

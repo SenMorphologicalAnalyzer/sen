@@ -22,36 +22,39 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Locale;
 
 import net.java.sen.StreamTagger;
 import net.java.sen.Token;
 
 public class StreamTaggerDemo {
-  public static void main(String args[]) {
-    try {
-      if (args.length != 2) {
-        System.err
-            .println("usage: java StreamTaggerDemo <ファイル名> <エンコーディング>");
-        System.exit(1);
-      }
-      BufferedReader br = new BufferedReader(new InputStreamReader(
-          new FileInputStream(args[0]), args[1]));
-      StreamTagger tagger = new StreamTagger((Reader) br, Locale.JAPANESE);
+    public static void main(String args[]) {
+        try {
+            if (args.length != 2) {
+                System.err
+                        .println("usage: java StreamTaggerDemo <ファイル名> <エンコーディング>");
+                System.exit(1);
+            }
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    new FileInputStream(args[0]), args[1]));
+            //    String confPath = System.getProperty("sen.home")
+            //			+ System.getProperty("file.separator") + "conf/sen.xml";
+            //     StreamTagger tagger = new StreamTagger((Reader) br, confPath);
+            StreamTagger tagger = new StreamTagger((Reader) br);
 
-      //	BufferedReader is = new BufferedReader(System.in);
+            //	BufferedReader is = new BufferedReader(System.in);
 
-      while (tagger.hasNext()) {
-        Token token = tagger.next();
-        System.out.println(token.toString() + "\t(" + token.getBasicString()
-            + ")" + "\t" + token.getPos() + "(" + token.start() + ","
-            + token.end() + "," + token.length() + ")\t" + token.getReading()
-            + "\t" + token.getPronunciation());
-      }
+            while (tagger.hasNext()) {
+                Token token = tagger.next();
+                System.out.println(token.toString() + "\t("
+                        + token.getBasicString() + ")" + "\t" + token.getPos()
+                        + "(" + token.start() + "," + token.end() + ","
+                        + token.length() + ")\t" + token.getReading() + "\t"
+                        + token.getPronunciation());
+            }
 
-    } catch (Exception e) {
-      e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-  }
 }
 

@@ -29,33 +29,66 @@ import net.java.sen.processor.PostProcessor;
 import net.java.sen.processor.PreProcessor;
 
 /**
- * This class generate morpheme tags from Stream.
+ * This class generate morpheme tags from Reader.
+ * <pre>
+ * BufferedReader br = 
+ *    new BufferedReader(
+ *        new InputStreamReader(
+ *            new FileInputStream("input.txt"), "Windows-31J"));
+ * 
+ * StreamTagger tagger = new StreamTagger((Reader) br);
+ * 
+ * while (tagger.hasNext()) {
+ *   Token token = tagger.next();
+ *   System.out.println(token.toString()
+ * 	                  + "\t(" +
+ *                    + token.getBasicString()
+ *                    + ")\t"
+ *                    + token.getPos());
+ * }
+ * </pre>
  */
 public class StreamTagger {
-
   private StringTagger stringTagger = null;
-  private static final int BUFFER_SIZE = 64;
+  private static final int BUFFER_SIZE = 256;
   private final char[] buffer = new char[BUFFER_SIZE];
   private int cnt = 0;
   private Token[] token;
   private boolean complete = false;
   private Reader reader;
-  public StreamTagger() {
-  }
+
 
   /**
    * Construct new StreamTagger. Currently only support Locale.JAPANESE.
    * 
+   * @deprecated 
    * @param reader
    *          Reader to add tag.
    * @param locale
    *          Locale to generate morphological analyzer.
-   *  
    */
   public StreamTagger(Reader reader, Locale locale) throws IOException,
-      IllegalArgumentException {
-    stringTagger = StringTagger.getInstance(locale);
-    this.reader = reader;
+  IllegalArgumentException {
+      stringTagger = StringTagger.getInstance(locale);
+      this.reader = reader;
+  }
+
+  /**
+   * Construct new StreamTagger.
+   */
+  public StreamTagger(Reader reader) throws IOException,
+     IllegalArgumentException {
+      stringTagger = StringTagger.getInstance();
+      this.reader = reader;
+  }
+
+  /**
+   * Construct new StreamTagger.
+   */
+  public StreamTagger(Reader reader, String senConfig) throws IOException,
+  	IllegalArgumentException {
+      stringTagger = StringTagger.getInstance(senConfig);
+      this.reader = reader;
   }
 
   /**

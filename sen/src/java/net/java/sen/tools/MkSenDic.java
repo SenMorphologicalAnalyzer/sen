@@ -18,7 +18,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *  
  */
-
+			
 package net.java.sen.tools;
 
 import java.io.BufferedOutputStream;
@@ -81,11 +81,18 @@ public class MkSenDic {
     //
     log.info("(1/7): reading connection matrix ... ");
     try {
+      log.info("connection file = " + rb.getString("text_connection_file"));
+      log.info("charset = " + rb.getString("dic.charset"));
       CSVParser csvparser = new CSVParser(new FileInputStream(rb
           .getString("text_connection_file")), rb.getString("dic.charset"));
       String t[];
       int line = 0;
       while ((t = csvparser.nextTokens()) != null) {
+        if (t.length < 4) {
+	    log.warn("invalid line in " + rb.getString("text_connection_file") + ":" + line);
+	    log.warn(rb.getString("text_connection_file") + "may be broken.");
+    	    break;
+	}
         dm1.add(t[0]);
         rule1.add(t[0]);
 
@@ -117,10 +124,10 @@ public class MkSenDic {
        * System.out.print("22="); dm3.getById(22); System.out.print("368=");
        * dm3.getById(368);
        * 
-       * System.out.println(dm3.getDicId("•ŽŒ,I•ŽŒ,*,*,*,*,‚Ë"));
+       * System.out.println(dm3.getDicId("?????*,*,*,*,?"));
        * DictionaryMaker.debug = true;
-       * System.out.println(dm3.getDicId("•ŽŒ,I•ŽŒ,*,*,*,*,‚Ë"));
-       * System.out.println(dm3.getDicIdNoCache("•ŽŒ,I•ŽŒ,*,*,*,*,‚Ë"));
+       * System.out.println(dm3.getDicId("?????*,*,*,*,?"));
+       * System.out.println(dm3.getDicIdNoCache("?????*,*,*,*,?"));
        */
 
     } catch (IOException e) {
@@ -295,7 +302,7 @@ public class MkSenDic {
     // Step5. Sort lexs and write to file
     //
     log.info("(5/7): sorting lex... ");
-
+    
     int value[] = new int[dicList.size()];
     char key[][] = new char[dicList.size()][];
     int spos = 0;

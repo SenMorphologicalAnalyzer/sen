@@ -20,7 +20,6 @@
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Locale;
 
 import net.java.sen.StringTagger;
 import net.java.sen.Token;
@@ -30,8 +29,14 @@ public class StringTaggerDemo {
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
       System.out.println("done.\nPlease input Japanese sentence:");
-      StringTagger tagger = StringTagger.getInstance(Locale.JAPANESE);
-      //	BufferedReader is = new BufferedReader(System.in);
+
+      StringTagger tagger = StringTagger.getInstance();
+      // You can also get StringTagger instance by following code:
+            //
+            //   String confPath = System.getProperty("sen.home")
+            //			+ System.getProperty("file.separator") + "conf/sen.xml";
+            //   tagger = StringTagger.getInstance(confPath);
+
       String s;
       while ((s = br.readLine()) != null) {
         Token[] token = tagger.analyze(s);

@@ -113,10 +113,10 @@ public class SenUtils {
 
   };
 
-  public static String getPath(String path) {
+  public static String getPath(String path, String parent) {
     if (path.charAt(0) != separator
         || (path.length() > 1 && path.charAt(1) == ':' && separator == '\\')) {
-      return System.getProperty("sen.home") + separator + path;
+      return parent + separator + path;
     } else {
       return path;
     }

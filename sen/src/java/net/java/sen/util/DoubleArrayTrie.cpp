@@ -375,7 +375,7 @@ public  class DoubleArrayTrie {
 
       // ignore new line and line feed.
       // this may causes error when use latain character.
-      if(key[i]=='\n'||key[i]=='\r')continue;
+      //      if(key[i]=='\n'||key[i]=='\r')continue;
 
       p = b; // + 0;
       n = base(p);
