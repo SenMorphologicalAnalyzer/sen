@@ -44,7 +44,7 @@ public class RemarkPostProcessor implements PostProcessor {
         Token addToken = (Token) itr.next();
         int newTokenCount = 0;
         for (int i = 0; i < tokens.length; i++) {
-            while (addToken != null && tokens[i].start() > addToken.start()) {
+            while (addToken != null && tokens[i].start() >= addToken.start()) {
                 newTokens[newTokenCount++] = addToken;
                 if (!itr.hasNext()) {
                     addToken = null;
