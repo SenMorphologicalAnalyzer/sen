@@ -25,102 +25,99 @@
 package net.java.sen;
 
 /**
- *  
- *
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * This class represent morpheme information.
  */
 final public class Token {
-    private Node node;
-    // cache for each value.
-    private String pos = null;
-    private String pronunciation = null;
-    private String basic = null;
-    private String read = null;
-    private String nodeStr = null;
+  private Node node;
+  // cache for each value.
+  private String pos = null;
+  private String pronunciation = null;
+  private String basic = null;
+  private String read = null;
+  private String nodeStr = null;
 
-    /**
-     * token which represents morpheme.
-     */
-    protected Token(Node n){
-        node = n;
-        pos = node.getPos();
-    }
+  /**
+   * constructor.
+   */
+  protected Token(Node n) {
+    node = n;
+    pos = node.getPos();
+  }
 
-    /**
-     * get start index of this token.
-     */
-    public int start(){
-        return node.begin;
-    }
+  /**
+   * get start index of this token.
+   */
+  public int start() {
+    return node.begin;
+  }
 
-    /**
-     * get end index of this token.
-     */
-    public int end() {
-        return node.begin + node.length;
-    }
+  /**
+   * get end index of this token.
+   */
+  public int end() {
+    return node.begin + node.length;
+  }
 
-    /**
-     * get length of this token.
-     */
-    public int length() {
-        return node.length;
-    }
+  /**
+   * get length of this token.
+   */
+  public int length() {
+    return node.length;
+  }
 
-    /**
-     * get part of speech.  
-     * @return part of speech which represents this token.
-     */
-    public String getPos() {
-        return pos;
-    }
+  /**
+   * get part of speech.
+   * 
+   * @return part of speech which represents this token.
+   */
+  public String getPos() {
+    return pos;
+  }
 
-    /**
-     * set part of speech.
-     * 
-     * @pos part of speech.
-     */
-    protected void setPos(String pos) {
-        this.pos = pos;
-    }
+  /**
+   * set part of speech.
+   * 
+   * @pos part of speech.
+   */
+  protected void setPos(String pos) {
+    this.pos = pos;
+  }
 
-    /**
-     * get un-conjugate string. This method is thread unsafe.
-     * 
-     * @return un-conjugate representation for morpheme.
-     */ 
-    public String getBasicString() {
-    	if (basic == null)
-    		basic = node.getBasicString();
-    	return basic;
-    }
+  /**
+   * get un-conjugate string. This method is thread unsafe.
+   * 
+   * @return un-conjugate representation for morpheme.
+   */
+  public String getBasicString() {
+    if (basic == null)
+      basic = node.getBasicString();
+    return basic;
+  }
 
-    /**
-     * get reading. This method is thread unsafe.
-     */
-    public String getReading(){
-    	if (read == null)
-    		read = node.getReading();
-        return read;
-    }
+  /**
+   * get reading. This method is thread unsafe.
+   */
+  public String getReading() {
+    if (read == null)
+      read = node.getReading();
+    return read;
+  }
 
-    /**
-     * get pronunciation. This method is thread unsafe.
-     */
-    public String getPronunciation(){
-    	if (pronunciation == null)
-    		pronunciation = node.getPronunciation();
-        return pronunciation;
-    }
+  /**
+   * get pronunciation. This method is thread unsafe.
+   */
+  public String getPronunciation() {
+    if (pronunciation == null)
+      pronunciation = node.getPronunciation();
+    return pronunciation;
+  }
 
-    /**
-     * get string representation. This method is thread unsafe.
-     */
-    public String toString() {
-    	if (nodeStr == null)
-    		nodeStr = node.toString();
-		return nodeStr;
-    }
+  /**
+   * get string representation. This method is thread unsafe.
+   */
+  public String toString() {
+    if (nodeStr == null)
+      nodeStr = node.toString();
+    return nodeStr;
+  }
 }

@@ -33,7 +33,7 @@ import java.util.ArrayList;
 
 /**
  * parse CSV file and extract token.
- */ 
+ */
 public class CSVParser {
   private BufferedReader reader = null;
   private String line = null;
@@ -41,55 +41,63 @@ public class CSVParser {
 
   /**
    * Constructor for CSVParser
-   *
-   * @param is input stream to parse.
+   * 
+   * @param is
+   *          input stream to parse.
    */
-  public CSVParser (InputStream is) throws IOException {
+  public CSVParser(InputStream is) throws IOException {
     reader = new BufferedReader(new InputStreamReader(is));
   }
 
   /**
    * Constructor for CSVParser
-   *
-   * @param is input stream to parse.
-   * @param charset charset for stream.
+   * 
+   * @param is
+   *          input stream to parse.
+   * @param charset
+   *          charset for stream.
    */
-  public CSVParser (InputStream is, String charset) throws IOException {
+  public CSVParser(InputStream is, String charset) throws IOException {
     reader = new BufferedReader(new InputStreamReader(is, charset));
   }
 
   public boolean nextRow() throws IOException {
     line = reader.readLine();
-    if (line == null || line.length() == 0) return false;
+
+    if (line == null || line.length() == 0)
+      return false;
+    //    System.out.println("line("+line.length()+")="+line);
+
     pos = 0;
     return true;
   }
 
   /**
    * extract next token.
-   *
+   * 
    * @return token
    */
-  public String nextToken(){
+  public String nextToken() {
     int start;
     boolean quote = false;
     boolean escape = false;
 
-    if (line == null || pos >= line.length()) return null;
+    if (line == null || pos >= line.length())
+      return null;
 
-    if (line.charAt(pos) =='\"'){
+    if (line.charAt(pos) == '\"') {
       quote = true;
       pos++;
     }
     start = pos;
-   
+
     while (pos < line.length()) {
       if (line.charAt(pos) == ',' && !quote) {
-	return line.substring(start, pos++);
+        return line.substring(start, pos++);
       } else if (line.charAt(pos) == '\"' && quote) {
-	String ret = line.substring(start, pos);
-	pos += 2;
-	return ret;
+        String ret = line.substring(start, pos);
+        pos += 2;
+        return ret;
       }
       pos++;
     }
@@ -98,43 +106,41 @@ public class CSVParser {
 
   /**
    * extract all tokens in line.
-   *
+   * 
    * @return tokens
    */
   public String[] nextTokens() throws IOException {
     ArrayList list = new ArrayList();
     String input;
 
-    if (nextRow()==false) return null;
+    if (nextRow() == false)
+      return null;
 
-    while ((input = nextToken())!=null ) {
+    while ((input = nextToken()) != null) {
       list.add(input);
     }
     String r[] = new String[list.size()];
     for (int i = 0; i < r.length; i++) {
-      r[i]=(String)list.get(i);
+      r[i] = (String) list.get(i);
     }
     return r;
   }
 
-
-  public static void main(String args[]){
+  public static void main(String args[]) {
     try {
       InputStream is = new FileInputStream(args[0]);
       CSVParser csv = new CSVParser(is, "EUC_JP");
       int row = 0, col = 0;
       String str[];
-      while((str = csv.nextTokens())!=null){
-	row++;
-	for(int i = 0;i<str.length;i++){
-	  System.out.println("("+i+","+row+")="+str[i]);
-	}
+      while ((str = csv.nextTokens()) != null) {
+        row++;
+        for (int i = 0; i < str.length; i++) {
+          System.out.println("(" + i + "," + row + ")=" + str[i]);
+        }
       }
-    } catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
 }
-
-
 
