@@ -45,9 +45,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 
-public class MkChaDic {
-  private static Log log = LogFactory.getLog(MkChaDic.class);
-
+public class MkSenDic {
+  private static Log log = LogFactory.getLog(MkSenDic.class);
+  
+/**
+ * Build sen dictionary.
+ * @param args custom dictionary files. see dic/build.xml.
+ */
   public static void main(String args[]) {
     ResourceBundle rb = ResourceBundle.getBundle("dictionary");
     DictionaryMaker dm1 = new DictionaryMaker();
@@ -113,10 +117,10 @@ public class MkChaDic {
        * System.out.print("22="); dm3.getById(22); System.out.print("368=");
        * dm3.getById(368);
        * 
-       * System.out.println(dm3.getDicId("Ωıª?,Ω™Ωıª?,*,*,*,*,§Õ"));
+       * System.out.println(dm3.getDicId("èïéå,èIèïéå,*,*,*,*,ÇÀ"));
        * DictionaryMaker.debug = true;
-       * System.out.println(dm3.getDicId("Ωıª?,Ω™Ωıª?,*,*,*,*,§Õ"));
-       * System.out.println(dm3.getDicIdNoCache("Ωıª?,Ω™Ωıª?,*,*,*,*,§Õ"));
+       * System.out.println(dm3.getDicId("èïéå,èIèïéå,*,*,*,*,ÇÀ"));
+       * System.out.println(dm3.getDicIdNoCache("èïéå,èIèïéå,*,*,*,*,ÇÀ"));
        */
 
     } catch (IOException e) {
@@ -203,17 +207,36 @@ public class MkChaDic {
           new FileOutputStream(rb.getString("pos_file")), rb
               .getString("sen.charset")));
 
-      BufferedReader is = new BufferedReader(new InputStreamReader(
-          new FileInputStream(rb.getString("text_dic_file")), rb
+      log.info("load dic: "+rb.getString("text_dic_file"));
+      BufferedReader dicStream = new BufferedReader(new InputStreamReader(
+              new FileInputStream(rb.getString("text_dic_file")), rb
               .getString("dic.charset")));
 
       String t;
       int line = 0;
+      int custum_dic = -1;
 
       StringBuffer key_b = new StringBuffer();
       StringBuffer pos_b = new StringBuffer();
 
-      while ((t = is.readLine()) != null) {
+      while (true) {
+        t = dicStream.readLine();
+        if (t==null) {
+          dicStream.close();
+          custum_dic++;
+          if (args.length==custum_dic) {
+            break;
+        } else {
+          // read custum dictionary
+          log.info("load dic: "+"args[custum_dic]");
+          dicStream = new BufferedReader(
+                new InputStreamReader(
+                  new FileInputStream(args[custum_dic]),
+   								rb.getString("dic.charset")));
+          }
+          continue;
+        }
+        
         String csv[] = DictionaryMaker.csv2strings(t);
         if (csv.length < (pos_size + pos_start)) {
           throw new RuntimeException("format error:" + line);
