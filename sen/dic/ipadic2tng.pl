@@ -28,7 +28,7 @@ sub conv
     my @tmp   = split /,/, $str;
     my $ctype = $tmp[6];
 
-    # ³èÍÑ¤òÅ¸³«¤¹¤ëÉ¬Í×¤¬Ìµ¤¤¤È¤­¤Ï, ¤½¤Î¤Þ¤Þ½ÐÎÏ    
+    # ³èÍÑ¤òÅ¸³«¤¹¤?É¬Í×¤¬Ìµ¤¤¤È¤­¤Ï, ¤½¤Î¤Þ¤Þ½ÐÎÏ    
     if (! defined $CTYPE{$ctype}) { 
 	return "$str\n";
 	next;
@@ -43,7 +43,7 @@ sub conv
     my $reads = $read;
     my $prons = $pron;
 
-    # ¸ì´´¤À¤±»Ä¤¹
+    # ¸?´´¤À¤±»Ä¤¹
     my @list = @{$CTYPE{$ctype}};
     if ($list[0][1] ne "*") {
 	$lexs  = substr ($lex,  0, length ($lex)  - length($list[0][1]));
@@ -71,7 +71,7 @@ sub conv
 
 # connect.cha
 open (F, "$PREFIX/connect.cha") || die "Fatal: $PREFIX/connect.cha cannot open\n";
-open (S, "> connect.cha") || die "FATAL: connect.txt cannot open\n";
+open (S, "> connect.sen") || die "FATAL: connect.txt cannot open\n";
 while (<F>) {
     chomp;
 
@@ -115,13 +115,13 @@ while (<F>) {
 close (F);
 close (S);
 
-# cform.cha ¤ÎÆÉ¤ß¤³¤ß
+# cforms.cha ¤ÎÆÉ¤ß¤³¤ß
 my $ctype = "";
 my @CTYPE;
 open (F, "$PREFIX/cforms.cha") || die "Fatal: $PREFIX/cforms.cha cannot open\n";
 while (<F>) {
     chomp;
-    next if (/^;/ || /^$/ || /¸ì´´/);
+    next if (/^;/ || /^$/ || /¸?´´/);
     if (/^\((\S+)\s*$/) {
 	$ctype = $1;
     } elsif (/^\)\s*$/) {
@@ -136,7 +136,7 @@ close (F);
 # ¼­½ñ¤ÎÆÉ¤ß¤³¤ß
 opendir (DICDIR, $PREFIX) || die "FATAL: $PREFIX cannot open\n";
 my @dic = grep (/\.dic$/, readdir (DICDIR));
-open (S, "> dic.cha") || die "FATAL: dic.txt cannot open\n";
+open (S, "> dic.sen") || die "FATAL: dic.txt cannot open\n";
 
 for my $file (@dic) {
     print STDERR "$PREFIX/$file ...\n";
