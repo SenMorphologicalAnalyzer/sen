@@ -33,17 +33,16 @@ public class MappedBufferedReader implements FileAccessor {
     int pos = 0;
     long length = 0;
     MappedByteBuffer map = null;
-
+    FileInputStream fis = null;
     public MappedBufferedReader (String name) throws IOException {
         this(new File(name));
     }
 
     public MappedBufferedReader (File file) throws IOException {
-        FileInputStream fis = new FileInputStream(file);
+        fis = new FileInputStream(file);
         FileChannel fc = fis.getChannel();
         // Get the file's size and then map it into memory
         length = fc.size();
-	System.out.println("file length="+length);
         map = fc.map(FileChannel.MapMode.READ_ONLY, 0, length);
     }
 
@@ -76,5 +75,9 @@ public class MappedBufferedReader implements FileAccessor {
     public int read(byte b[], int start, int length) {
 	map.get(b, start, length);
 	return length;
+    }
+    
+    public void close() throws IOException{
+    	fis.close();
     }
 }

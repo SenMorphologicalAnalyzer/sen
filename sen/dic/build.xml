@@ -35,10 +35,10 @@
   <target name="prepare-dics">
     <condition property="dics.present">
       <and>
-        <available file="da.cha"/>
-        <available file="matrix.cha"/>
-        <available file="morphemeInfo.cha"/>
-        <available file="token.cha"/>
+        <available file="da.sen"/>
+        <available file="matrix.sen"/>
+        <available file="morphemeInfo.sen"/>
+        <available file="token.sen"/>
       </and>
     </condition>
   </target>
@@ -46,8 +46,8 @@
   <target name="prepare-dics0">
     <condition property="dics0.present">
       <and>
-        <available file="dic.cha"/>
-        <available file="connect.cha"/>
+        <available file="dic.sen"/>
+        <available file="connect.sen"/>
       </and>
     </condition>
   </target>
@@ -71,7 +71,7 @@
 
   <target name="clean">
     <delete>
-      <fileset dir="." includes="*.cha"/>
+      <fileset dir="." includes="*.sen"/>
     </delete>
     <delete dir="ipadic-${ipadic.version}"/>
     <delete file="${ipadic.archive}" />

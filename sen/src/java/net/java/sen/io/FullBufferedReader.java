@@ -38,6 +38,7 @@ public class FullBufferedReader implements FileAccessor {
         buf = new byte[(int)file.length()];
         InputStream is = new FileInputStream(file);
         is.read(buf);
+        is.close();
     }
 
     public void seek(int pos) throws IOException {
@@ -93,4 +94,8 @@ public class FullBufferedReader implements FileAccessor {
         }
         return 1;
     }
+    
+    public void close() throws IOException{
+    }
+    
 }

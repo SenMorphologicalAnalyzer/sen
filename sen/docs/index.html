@@ -26,7 +26,10 @@
 <h1>Sen(Java 形態素解析エンジン)</h1>
 
 <h2>Sen とは?</h2>
-Sen は、Java で実装された形態素解析器です。現在は、日本語しか使えませんが、文字の種類(日本語の場合、、カタカナ、漢字&平仮名、記号)を判別するTokenizerと形態素解析の辞書を用意すれば、他の言語でも利用可能です。また、Jakarta で開発されてる Java のインデックスサーチエンジン  <a href='http://jakarta.apache.org/lucene/'>Lucene </a> と組み合わせると、日本語の全文検索を行うことができるようになります。<br /><br />
+Sen は、Java で実装された形態素解析器です。現在は、日本語しか使えませんが、文字の種類(日本語の場合、、カタカナ、漢字&平仮名、記号)を判別するTokenizerと形態素解析の辞書を用意すれば、他の言語でも利用可能です。
+また、Jakarta で開発されてる Java のインデックスサーチエンジン  <a href='http://jakarta.apache.org/lucene/'>Lucene </a> と組み合わせると、
+日本語の全文検索を行うことができるようになります。J2SE/J2EEに対応していますので、Javaを利用したリッチクライアントから
+J2EEアプリケーションまで、幅広くご利用頂けます。<br /><br />
 <p />
 
 <p>
@@ -123,7 +126,8 @@ DVD     (DVD)   未知語(10,13,3) null    null
 
 <h2>プログラミングガイド</h2>
 <p>
-Senをライブラリとして利用したい場合は、src/java ディレクトリにあるStringTaggerDemo.javaとStreamTagger.javaを参考にして下さい。
+Senをライブラリとして利用したい場合は、src/java ディレクトリにあるStringTaggerDemo.java
+とStreamTaggerDemo.javaを参考にして下さい。
 基本的には、XXXTaggerクラスとTokenクラスを利用すればokです。例えば、次のようになります。
 </p>
 
@@ -139,6 +143,10 @@ for(int i = 0; i < token.length; i++){
   ...  
 }
 </pre>
+ストリームから形態素を取得するときは、StreamTaggerクラスを利用します。
+StreamTaggerの使い方についてはStreamTaggerDemoを参考にしてください。
+<br />
+<br />
 Tokenクラスの使い方は次の通りです。
 
 <table border=1 bgcolor=lightpink>
@@ -218,6 +226,14 @@ Tokenクラスの使い方は次の通りです。
 </ul>
 
 <h2>変更点</h2>
+<h4>0.9(β2)</h4>
+基本的にマイナーバージョンアップ。
+<ul>
+<li>mecab最新版に合わせ、ConnectCost.javaを削除し、コスト計算の機能をTokenizerに移行。</li>
+<li>リファクタリング</li>
+<li>接続コストの辞書(matrix.cha)をcloseするようにした</li>
+<li>ChaSenと辞書の互換性がないことから辞書の拡張子を.chaから.senに変更。</li>
+</ul>
 <h4>0.8(β1)</h4>
 <ul>
 <li>実際に採用事例が増えて来て、そこそこ実績が出て来たのでβリリースとした</li>

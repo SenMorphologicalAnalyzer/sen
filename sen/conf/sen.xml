@@ -3,10 +3,10 @@
 <configuration>
 
   <dictionary>
-    <connection-cost>dic/matrix.cha</connection-cost>
-    <double-array-trie>dic/da.cha</double-array-trie>
-    <token>dic/token.cha</token>
-    <pos-info>dic/posInfo.cha</pos-info>
+    <connection-cost>dic/matrix.sen</connection-cost>
+    <double-array-trie>dic/da.sen</double-array-trie>
+    <token>dic/token.sen</token>
+    <pos-info>dic/posInfo.sen</pos-info>
   </dictionary>
 
    <!-- encoding for ChaSenTNG dictionary.

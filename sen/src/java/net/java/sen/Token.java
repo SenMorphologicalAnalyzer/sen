@@ -24,10 +24,21 @@
 
 package net.java.sen;
 
-
+/**
+ *  
+ *
+ *
+ * To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
+ */
 final public class Token {
     private Node node;
+    // cache for each value.
     private String pos = null;
+    private String pronunciation = null;
+    private String basic = null;
+    private String read = null;
+    private String nodeStr = null;
 
     /**
      * token which represents morpheme.
@@ -76,32 +87,40 @@ final public class Token {
     }
 
     /**
-     * get un-conjugate string.
+     * get un-conjugate string. This method is thread unsafe.
      * 
      * @return un-conjugate representation for morpheme.
      */ 
     public String getBasicString() {
-        return node.getBasicString();
+    	if (basic == null)
+    		basic = node.getBasicString();
+    	return basic;
     }
 
     /**
-     * get reading.
+     * get reading. This method is thread unsafe.
      */
     public String getReading(){
-        return node.getReading();
+    	if (read == null)
+    		read = node.getReading();
+        return read;
     }
 
     /**
-     * get pronunciation.
+     * get pronunciation. This method is thread unsafe.
      */
     public String getPronunciation(){
-        return node.getPronunciation();
+    	if (pronunciation == null)
+    		pronunciation = node.getPronunciation();
+        return pronunciation;
     }
 
     /**
-     * get string representation.
+     * get string representation. This method is thread unsafe.
      */
     public String toString() {
-        return node.toString();
+    	if (nodeStr == null)
+    		nodeStr = node.toString();
+		return nodeStr;
     }
 }

@@ -24,7 +24,14 @@
 
 package net.java.sen;
 
+import java.io.File;
 import java.io.IOException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import net.java.sen.io.FileAccessor;
+import net.java.sen.io.FileAccessorFactory;
 
 public abstract  class Tokenizer 
 {
@@ -38,6 +45,67 @@ public abstract  class Tokenizer
     public CToken eosToken = null;
     public CToken unknownToken = new CToken();
     public Node  bosNode = new Node();
+
+    // matrix for connect cost and matrix size
+    private short matrix[];
+    private int msize1;
+    private int msize2;
+    private int msize3;
+    private static Log log = LogFactory.getLog(Tokenizer.class);
+    
+	public Tokenizer(String tokenFile, 
+                     String doubleArrayFile,
+                     String posInfoFile,
+		     String connectFile,
+   		     String charset
+                     ) throws IOException
+    {
+        dic = new Dictionary(tokenFile, doubleArrayFile, posInfoFile, charset);
+        bosToken = dic.getBOSToken();
+        bosToken2 = dic.getBOSToken();
+        eosToken = dic.getEOSToken();
+        unknownToken = dic.getUnknownToken();
+	loadConnectCost(connectFile);
+    }
+
+	/**
+	 * load connect cost file (matrix.cha)
+	 */
+	private void loadConnectCost(String connectFile) throws IOException {
+		FileAccessor fd = null;
+		long start;
+
+		File f = new File(connectFile);
+
+		log.info("connection file = " + f.toString());
+		start = System.currentTimeMillis();
+		fd = FileAccessorFactory.getInstance(f);
+		msize1 = fd.readShort();
+		msize2 = fd.readShort();
+		msize3 = fd.readShort();
+
+        // first 3 value means matrix information:
+        // *2 means information is short.
+        // each matrix value is short, so / 2
+
+		int len = ((int) f.length() - (3 * 2)) / 2;
+
+		log.debug("msize1=" + msize1);
+		log.debug("msize2=" + msize2);
+		log.debug("msize3=" + msize3);
+		log.debug("matrix size = " + len);
+
+		matrix = new short[len];
+		for (int i = 0; i < len; i++) {
+			matrix[i] = fd.readShort();
+		}
+		log.info(
+                 "time to load connect cost file = "
+                 + (System.currentTimeMillis() - start)
+                 + "[ms]");
+		fd.close();
+	}
+
 
     public int skipCharClass (char[] c, int begin, int end, 
                               int char_class, int fail[])
@@ -97,23 +165,40 @@ public abstract  class Tokenizer
         return eosNode;
     }
 
+	/**
+	 * get cost from three Node.
+	 *
+	 * @param lNode2
+	 * @param lNode
+	 * @param rNode
+	 */
+	int getCost(Node lNode2, Node lNode, Node rNode) {
+		int pos =
+			msize3 * (msize2 * lNode2.token.rcAttr2 + lNode.token.rcAttr1)
+            + rNode.token.lcAttr;
+		return matrix[pos] + rNode.token.cost;
+
+        // above code means matrix is in memory.
+        // if you hesitate consuming a lot of memory, you can use
+        // following code. 
+        /*
+        try {
+            fd.seek(pos*2+(3*2));
+            short val = fd.readShort();
+            if(log.isTraceEnabled()){
+                log.trace("cost = " + val);
+            }
+            return val;
+        } catch (IOException e){
+            throw new RuntimeException(e.toString());
+        }
+        */
+	}
+
     public boolean close () 
     {
         return dic.close ();
     }
 
-	public Tokenizer(String tokenFile, 
-                     String doubleArrayFile,
-                     String posInfoFile,
-                     String charset
-                     ) throws IOException
-    {
-        dic = new Dictionary(tokenFile, doubleArrayFile, posInfoFile, charset);
-
-        bosToken = dic.getBOSToken();
-        bosToken2 = dic.getBOSToken();
-        eosToken = dic.getEOSToken();
-        unknownToken = dic.getUnknownToken();
-    }
 }
 

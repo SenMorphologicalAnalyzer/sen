@@ -34,7 +34,6 @@ public class Viterbi {
 
 
     private Tokenizer tokenizer;
-    private ConnectCost connectCost;
     private Node      eosNode;
     private Node      bosNode;
     private char      sentence[];
@@ -43,25 +42,13 @@ public class Viterbi {
 
     public Viterbi(){
         tokenizer = null;
-        connectCost = null;
     }
    
-    public Viterbi (Tokenizer t, ConnectCost c)
+    public Viterbi (Tokenizer t)
     {
-        set (t, c);
-        //        t.open();
+    	tokenizer = t;
+
         init();
-    }
-
-
-    boolean set (Tokenizer t, ConnectCost c)
-    {
-        if (t !=null && c !=null) {
-            tokenizer = t;
-            connectCost = c;
-            return true;
-        }
-        return false;
     }
 
     void init () 
@@ -184,7 +171,7 @@ public class Viterbi {
                 }
 
 
-                int cost = lNode.cost + connectCost.getCost (lNode.prev, lNode, rNode);
+                int cost = lNode.cost + tokenizer.getCost (lNode.prev, lNode, rNode);
                 if (cost <= bestCost) {
                     bestNode  = lNode;
                     bestCost  = cost;
@@ -217,7 +204,7 @@ public class Viterbi {
                     }
 
                     rNode2.cost   = rNode.cost + 
-                        connectCost.getCost (rNode.prev, rNode, rNode2);
+                        tokenizer.getCost (rNode.prev, rNode, rNode2);
                     rNode2.prev   = rNode;
 
                     int y = rNode2.end + pos2;

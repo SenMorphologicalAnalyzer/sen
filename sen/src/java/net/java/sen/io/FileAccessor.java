@@ -32,4 +32,5 @@ public interface FileAccessor {
     public int readInt() throws IOException;
     public int read() throws IOException;
     public int read(byte b[], int start, int length) throws IOException;
+    public void close() throws IOException;
 }

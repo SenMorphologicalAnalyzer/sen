@@ -51,91 +51,16 @@ public class StringTagger
 	int cnt = 0;
 	private static StringTagger tagger = null;
 	private String DEFAULT_CONFIG = "conf/sen.xml" ;
-	protected String unknownPos = null;    
+	protected String unknownPos = null;
 	
-	/**
-	 * Initialize mophological analyzer for Japanse.
-	 */
-	private void init_ja(String confFile) throws IOException 
-	{
-		String confPath = 
-			System.getProperty("sen.home") 
-			+ System.getProperty("file.separator") 
-			+ confFile;
-		
-		String tokenFile = null;
-		String doubleArrayFile = null;
-		String posInfoFile = null;
-		String costFile = null;
-		String charset = null;
-		
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		try {
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(new InputSource(confPath));
-			NodeList nl = doc.getFirstChild().getChildNodes();
-			for (int i=0;i<nl.getLength();i++) {
-				org.w3c.dom.Node n = nl.item(i);
-				if (n.getNodeType()==org.w3c.dom.Node.ELEMENT_NODE) {
-					String nn = n.getNodeName();
-					String value = n.getFirstChild().getNodeValue();
-					
-					if(nn.equals("charset")){
-						charset = value;
-					} else if(nn.equals("unknown-pos")){
-						unknownPos = value;
-					}
-					
-					
-					if(nn.equals("dictionary")){
-						// read nested tag in <dictinary>
-						NodeList dnl = n.getChildNodes();
-						for (int j=0;j<dnl.getLength();j++) {
-							org.w3c.dom.Node dn = dnl.item(j);
-							if (dn.getNodeType()==org.w3c.dom.Node.ELEMENT_NODE) {
-								
-								String dnn = dn.getNodeName();
-								if(dn.getFirstChild()==null){
-									throw new IllegalArgumentException("element '"+dnn+"' is empty");        							
-								}
-								String dvalue = dn.getFirstChild().getNodeValue();
-								
-								if(dnn.equals("connection-cost")){
-									costFile = SenUtils.getPath(dvalue);
-								} else if(dnn.equals("double-array-trie")){
-									doubleArrayFile = SenUtils.getPath(dvalue);
-								} else if(dnn.equals("token")){
-									tokenFile = SenUtils.getPath(dvalue);
-								} else if(dnn.equals("pos-info")){
-									posInfoFile = SenUtils.getPath(dvalue);
-								} else {
-									throw new IllegalArgumentException("element '"+dnn+"' is invalid");        							
-								}
-							}
-						}
-					}
-				}
-			}
-		} catch (ParserConfigurationException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		} catch (FileNotFoundException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		} catch (SAXException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		} catch (IOException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		}
-		
-		net.java.sen.Tokenizer tokenizer = 
-			new net.java.sen.ja.JapaneseTokenizer(tokenFile, 
-					doubleArrayFile, 
-					posInfoFile,
-					charset);
-		
-		ConnectCost connectCost = new ConnectCost(costFile);
-		viterbi = new Viterbi(tokenizer, connectCost);
-	}
+	// configuration file 
+	String tokenFile = null;
+	String doubleArrayFile = null;
+	String posInfoFile = null;
+	String connectFile = null;
 	
+	String charset = null;
+		
 	/**
 	 * Construct new StringTagger. Currently only support
 	 * Locale.JAPANESE.
@@ -171,6 +96,28 @@ public class StringTagger
 		} else {
 			return (StringTagger)tagger;
 		}
+	}
+
+	/**
+	 * Initialize mophological analyzer for Japanse.
+	 */
+	private void init_ja(String confFile) throws IOException 
+	{
+		String confPath = 
+			System.getProperty("sen.home") 
+			+ System.getProperty("file.separator") 
+			+ confFile;
+		
+		readConfig(confPath);
+		
+		net.java.sen.Tokenizer tokenizer = 
+			new net.java.sen.ja.JapaneseTokenizer(tokenFile, 
+					doubleArrayFile, 
+					posInfoFile,
+					connectFile,
+					charset);
+		
+		viterbi = new Viterbi(tokenizer);
 	}
 	
 	/**
@@ -234,7 +181,69 @@ public class StringTagger
 		if (token == null && cnt == token.length) return false;
 		return true;
 	}
-
+	
+	/**
+	 * Read configuration file.
+	 * @param confFile	configuration file
+	 */
+	private void readConfig(String confFile) {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = builder.parse(new InputSource(confFile));
+			NodeList nl = doc.getFirstChild().getChildNodes();
+			for (int i=0;i<nl.getLength();i++) {
+				org.w3c.dom.Node n = nl.item(i);
+				if (n.getNodeType()==org.w3c.dom.Node.ELEMENT_NODE) {
+					String nn = n.getNodeName();
+					String value = n.getFirstChild().getNodeValue();
+					
+					if(nn.equals("charset")){
+						charset = value;
+					} else if(nn.equals("unknown-pos")){
+						unknownPos = value;
+					}
+					
+					if(nn.equals("dictionary")){
+						// read nested tag in <dictinary>
+						NodeList dnl = n.getChildNodes();
+						for (int j=0;j<dnl.getLength();j++) {
+							org.w3c.dom.Node dn = dnl.item(j);
+							if (dn.getNodeType()==org.w3c.dom.Node.ELEMENT_NODE) {
+								
+								String dnn = dn.getNodeName();
+								if(dn.getFirstChild()==null){
+									throw new IllegalArgumentException("element '"+dnn+"' is empty");        							
+								}
+								String dvalue = dn.getFirstChild().getNodeValue();
+								
+								if(dnn.equals("connection-cost")){
+									connectFile = SenUtils.getPath(dvalue);
+								} else if(dnn.equals("double-array-trie")){
+									doubleArrayFile = SenUtils.getPath(dvalue);
+								} else if(dnn.equals("token")){
+									tokenFile = SenUtils.getPath(dvalue);
+								} else if(dnn.equals("pos-info")){
+									posInfoFile = SenUtils.getPath(dvalue);
+								} else {
+									throw new IllegalArgumentException("element '"+dnn+"' is invalid");        							
+								}
+							}
+						}
+					}
+				}
+			}
+		} catch (ParserConfigurationException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} catch (FileNotFoundException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} catch (SAXException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} catch (IOException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
 }
 
 

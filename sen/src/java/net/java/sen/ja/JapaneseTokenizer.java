@@ -41,9 +41,10 @@ public  class JapaneseTokenizer extends Tokenizer
 	public JapaneseTokenizer(String tokenFile, 
                              String doubleArrayFile,
                              String posInfoFile,
+		             String connectFile,
                              String charset
                      ) throws IOException{
-        super(tokenFile, doubleArrayFile, posInfoFile, charset);
+        super(tokenFile, doubleArrayFile, posInfoFile, connectFile, charset);
     }
 
 
