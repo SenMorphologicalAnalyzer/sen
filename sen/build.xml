@@ -91,6 +91,8 @@
   	<copy todir="${build.dest}/${name}-${version}">
   		<fileset dir=".">
 			<include name="**/*" />
+			<exclude name="**/TEST*" />
+			<exclude name="**/test/**/*" />
   		</fileset>
   	</copy>
 	<delete dir="${build.dest}/${name}-${version}/build" />
@@ -108,7 +110,11 @@
   <target name="clean"
       description="clean up">
     <delete dir="${build.dest}"/>
-    <delete dir="${dist.dir}"/>
+    <delete>
+  		<fileset dir=".">
+			<include name="TEST*" />
+  		</fileset>
+    </delete>
   </target>
 
   <target name="test" depends="jar"
