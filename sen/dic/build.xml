@@ -7,11 +7,10 @@
 
 -->
 <project name="ipadic" default="create" basedir=".">
-
+<!--
   <property name="perl.bin" value="c:/usr/cygwin/bin/perl.exe"/>
-<!---
-  <property name="perl.bin" value="/usr/bin/perl"/>
 -->
+  <property name="perl.bin" value="/usr/bin/perl"/>
   <property name="ipadic2tng"  value="./ipadic2tng.pl"/>
   <property name="ipadic.home" value="http://chasen.aist-nara.ac.jp/stable/ipadic"/>
   <property name="ipadic.version" value="2.5.0"/>
@@ -22,7 +21,7 @@
   <property name="lib.dir" location="lib"/>
   <property name="commons-logging.jar" value="../lib/commons-logging.jar"/>
   <property name="commons-logging-api.jar" value="../lib/commons-logging-api.jar"/>
-  <property name="sen.jar" value="../build/lib/sen.jar"/>
+  <property name="sen.jar" value="../lib/sen.jar"/>
   <property name="proxy.port" value="80" />
 
   <target name="prepare-proxy" if="proxy.host">
