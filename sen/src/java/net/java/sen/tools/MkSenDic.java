@@ -374,8 +374,6 @@ public class MkSenDic {
     value[dsize] = bsize + (spos << 8);
     dsize++;
 
-    System.err.println(" done!");
-
     dm1 = null;
     dm2 = null;
     dm3 = null;
