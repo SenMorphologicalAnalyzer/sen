@@ -48,9 +48,13 @@
 	<arg line="-P ${src.dir}/net/java/sen/util/DoubleArrayTrie.cpp"/>
     </exec>
 
-    <javac srcdir="${src.dir}" destdir="${build.classes}" debug="true"
-      deprecation="${deprecation}" encoding="euc_jp"
-      classpathref="classpath">
+    <javac srcdir="${src.dir}"
+           destdir="${build.classes}"
+           debug="true"
+           deprecation="${deprecation}"
+           encoding="euc_jp"
+           source="1.3"
+           classpathref="classpath">
     </javac>
 
   </target>
@@ -120,9 +124,13 @@
   <target name="test" depends="jar"
       description="test">
   	
-    <javac srcdir="${test.dir}" destdir="${build.classes}" debug="true"
-      deprecation="${deprecation}" encoding="euc_jp"
-      classpathref="classpath">
+    <javac srcdir="${test.dir}"
+           destdir="${build.classes}"
+           debug="true"
+           deprecation="${deprecation}"
+           encoding="euc_jp"
+           classpathref="classpath">
+           source="1.3"
     </javac>
   	
   	<junit fork="yes">
