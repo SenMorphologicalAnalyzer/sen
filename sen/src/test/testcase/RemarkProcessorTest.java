@@ -6,14 +6,12 @@ import java.io.StringReader;
 
 import net.java.sen.StringTagger;
 import net.java.sen.Token;
-import net.java.sen.processor.CompositPostProcessor;
-import net.java.sen.processor.PostProcessor;
 import net.java.sen.processor.RemarkPostProcessor;
 import net.java.sen.processor.RemarkPreProcessor;
 import junit.framework.TestCase;
 
 public class RemarkProcessorTest extends TestCase {
-    public static String TESTSTR = "&lt; コメント &gt;  です";
+    public static String TESTSTR = "before&lt;コメント&gt;after";
 
     static {
         System.setProperty("sen.home", ".");
@@ -28,9 +26,21 @@ public class RemarkProcessorTest extends TestCase {
         tagger.addPreProcessor(remarkPrePr);
        
         Token[] token = tagger.analyze(TESTSTR);
-        System.out.println("token="+token[0].toString());        
-        System.out.println("token="+token[1].toString());        
-        assertEquals(token[1].getPos(), "記号-注釈");
-        assertEquals(token[1].toString(), "&lt; コメント &gt;");
+        assertEquals(token[0].toString(),"before");
+        
+        assertEquals("&lt;コメント&gt;", token[1].toString());
+        assertEquals(6, token[1].start());
+        assertEquals(18, token[1].end());
+        assertEquals("記号-注釈", token[1].getPos());
+        
+        assertEquals("after",token[2].toString());
+        assertEquals(18,token[2].start());
+        assertEquals(23,token[2].end());
+        
+        System.out.println("--------");
+        for (int i = 0; i < token.length; i++) {
+            System.out.println("="+token[i].toString()+":"+token[i].getPos()+token[i].start()+":"+token[i].end());
+        }
+
     }
 }
