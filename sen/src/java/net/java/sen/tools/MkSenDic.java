@@ -176,7 +176,6 @@ public class MkSenDic {
     try {
       DataOutputStream out = new DataOutputStream(new BufferedOutputStream(
         new FileOutputStream(rb.getString("matrix_file"))));
-      System.out.println("size1 = " + size1 + "  size2 = " + size2 + "  size3 = " + size3);
       out.writeShort(size1);
       out.writeShort(size2);
       out.writeShort(size3);
