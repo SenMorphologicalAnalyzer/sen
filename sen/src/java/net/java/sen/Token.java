@@ -35,6 +35,11 @@ final public class Token {
   private String basic = null;
   private String read = null;
   private String nodeStr = null;
+  
+  private String addInfo = null;
+  private int cost = -1;
+  private int start = -1;
+  private int length = -1;
 
   /**
    * constructor.
@@ -43,28 +48,56 @@ final public class Token {
     node = n;
     pos = node.getPos();
   }
+  
+  /**
+   * constructor.
+   */
+  public Token() {}
 
   /**
    * get start index of this token.
    */
   public int start() {
-    return node.begin;
+  	if (start == -1) {
+  		start = node.begin;
+  	}
+    return start;
   }
 
+  /**
+   * set start position. This method is threa unsafe.
+   */
+  public void setStart(int s) {
+  	this.start = s;
+  }
+  
   /**
    * get end index of this token.
    */
   public int end() {
-    return node.begin + node.length;
+    return start() + length();
   }
 
   /**
    * get length of this token.
    */
   public int length() {
-    return node.length;
+    if (length == -1) {
+    	length = node.length;
+    }
+    return length;
   }
 
+  /**
+   * set length of token. This method is threa unsafe.
+   */
+  public void setLength(int l) {
+  	this.length = l;
+  	if (node != null) {
+  		this.node.length = l;
+  	}
+  }
+  
   /**
    * get part of speech.
    * 
@@ -79,7 +112,7 @@ final public class Token {
    * 
    * @pos part of speech.
    */
-  protected void setPos(String pos) {
+  public void setPos(String pos) {
     this.pos = pos;
   }
 
@@ -95,6 +128,13 @@ final public class Token {
   }
 
   /**
+   * set un-conjugate string. This method is thread unsafe.
+   */
+  public void setBasicString(String basic) {
+  	this.basic = basic;
+  }
+  
+  /**
    * get reading. This method is thread unsafe.
    */
   public String getReading() {
@@ -103,6 +143,13 @@ final public class Token {
     return read;
   }
 
+  /**
+   * set reading. This method is thread unsafe.
+   */
+  public void setReading(String read) {
+  	this.read = read;
+  }
+  
   /**
    * get pronunciation. This method is thread unsafe.
    */
@@ -113,11 +160,73 @@ final public class Token {
   }
 
   /**
+   * set pronunciation. This method is thread unsafe.
+   */
+  public void setPronunciation(String pronunciation) {
+  	this.pronunciation = pronunciation;
+  }
+  
+  /**
+   * get surface. This method is thread unsafe.
+   */
+  public String getSurface() {
+  	if (nodeStr == null)
+  		nodeStr = node.toString();
+  	return nodeStr;
+  }
+
+  /**
+   * set surface. This method is thread unsafe.
+   */
+  public void setSurface(String surface) {
+  	nodeStr = surface;
+  }
+  
+  /**
+   * get cost. This method is thread unsafe.
+   */
+  public int getCost() {
+  	if (cost == -1) {
+  		cost = node.getCost();
+  	}
+  	return cost;
+  }
+  
+  /**
+   * set cost. This method is thread unsafe.
+   */
+  public void setCost(int cost) {
+  	this.cost = cost;
+  }
+  
+  /**
+   * get additional information. This method is thread unsafe.
+   */
+  public String getAddInfo() {
+  	if (addInfo == null) {
+  		addInfo = node.getAddInfo();
+  	}
+  	return addInfo;
+  }
+  
+  /**
+   * set additional information. This method is thread unsafe.
+   */
+  public void setAddInfo(String addInfo) {
+  	this.addInfo = addInfo;
+  }
+  
+  /**
+   * get termInfo. This method is thread unsafe.
+   */
+  public String getTermInfo() {
+  	return node.termInfo;
+  }
+  
+  /**
    * get string representation. This method is thread unsafe.
    */
   public String toString() {
-    if (nodeStr == null)
-      nodeStr = node.toString();
-    return nodeStr;
+  	return getSurface();
   }
 }

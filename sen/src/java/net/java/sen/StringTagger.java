@@ -23,12 +23,19 @@ package net.java.sen;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import net.java.sen.processor.PostProcessor;
+import net.java.sen.processor.PreProcessor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,6 +57,9 @@ public class StringTagger {
   private static StringTagger tagger = null;
   private String DEFAULT_CONFIG = "conf/sen.xml";
   protected String unknownPos = null;
+  
+  private List preProcessorList = new ArrayList();
+  private List postProcessorList = new ArrayList();
 
   // configuration file
   String tokenFile = null;
@@ -133,6 +143,9 @@ public class StringTagger {
       log.debug("analyzer:" + input);
     }
 
+    Map postProcessInfo = new HashMap();
+    input = doPreProcess(input, postProcessInfo);
+    
     int len = 0;
     Node node = viterbi.analyze(input.toCharArray()).next;
     Node iter = node;
@@ -159,6 +172,8 @@ public class StringTagger {
       node = node.next;
     }
     cnt = 0;
+    
+    token = doPostProcess(token, postProcessInfo);
 
     return token;
   }
@@ -231,6 +246,8 @@ public class StringTagger {
                   tokenFile = SenUtils.getPath(dvalue);
                 } else if (dnn.equals("pos-info")) {
                   posInfoFile = SenUtils.getPath(dvalue);
+                } else if (dnn.equals("compound")) {
+                	// do nothing
                 } else {
                   throw new IllegalArgumentException("element '" + dnn
                       + "' is invalid");
@@ -250,6 +267,53 @@ public class StringTagger {
       throw new IllegalArgumentException(e.getMessage());
     }
   }
-
+  
+  /**
+   * Add PostProcessor.
+   * @param processor PostProcessor
+   */
+  public void addPostProcessor(PostProcessor processor) {
+  	postProcessorList.add(processor);
+  }
+  
+  /**
+   * Add PreProcessor.
+   * @param processor PreProcessor
+   */
+  public void addPreProcessor(PreProcessor processor) {
+  	preProcessorList.add(processor);
+  }
+  
+  /**
+   * Execute all registered preprocess.
+   * @param input input string
+   * @param postProcessInfo information passed to postProcess
+   * @return preprocessed string
+   */
+  protected String doPreProcess(String input, Map postProcessInfo) {
+  	Iterator itr = preProcessorList.iterator();
+  	String i = input;
+  	while (itr.hasNext()) {
+  		PreProcessor p = (PreProcessor)itr.next();
+  		i = p.process(i, postProcessInfo);
+  	}
+  	return i;
+  }
+  
+  /**
+   * Execute all registered preprocess.
+   * @param tokens tokens
+   * @param postProcessInfo information passed from preprocess
+   * @return postprocessed tokens
+   */
+  protected Token[] doPostProcess(Token[] tokens, Map postProcessInfo) {
+  	Iterator itr = postProcessorList.iterator();
+  	Token[] newTokens = tokens;
+  	while (itr.hasNext()) {
+  		PostProcessor p = (PostProcessor)itr.next();
+  		newTokens = p.process(newTokens, postProcessInfo);
+  	}
+  	return newTokens;
+  }
 }
 

@@ -25,6 +25,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Locale;
 
+import net.java.sen.processor.PostProcessor;
+import net.java.sen.processor.PreProcessor;
+
 /**
  * This class generate morpheme tags from Stream.
  */
@@ -127,5 +130,20 @@ public class StreamTagger {
     }
     return token[cnt++];
   }
+  
+  /**
+   * Add PostProcessor.
+   * @param processor PostProcessor
+   */
+  public void addPostProcessor(PostProcessor processor) {
+  	stringTagger.addPostProcessor(processor);
+  }
+  
+  /**
+   * Add PreProcessor.
+   * @param processor PreProcessor
+   */
+  public void addPreProcessor(PreProcessor processor) {
+  	stringTagger.addPreProcessor(processor);
+  }
 }
-

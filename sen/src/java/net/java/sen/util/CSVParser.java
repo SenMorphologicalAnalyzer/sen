@@ -29,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 
 /**
@@ -49,6 +50,15 @@ public class CSVParser {
     reader = new BufferedReader(new InputStreamReader(is));
   }
 
+  /**
+   * Constructor for CSVParser
+   * @param str
+   *           input string to parse.
+   */
+  public CSVParser (String str) {
+  	reader = new BufferedReader(new StringReader(str));
+  }
+  
   /**
    * Constructor for CSVParser
    * 
@@ -95,7 +105,11 @@ public class CSVParser {
       if (line.charAt(pos) == ',' && !quote) {
         return line.substring(start, pos++);
       } else if (line.charAt(pos) == '\"' && quote) {
-        String ret = line.substring(start, pos);
+      	if (pos+1 < line.length() && line.charAt(pos+1) == '\"') {
+      		pos += 2;
+      		continue;
+      	}
+        String ret = line.substring(start, pos).replaceAll("\"\"", "\"");
         pos += 2;
         return ret;
       }

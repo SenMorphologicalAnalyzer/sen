@@ -38,6 +38,9 @@ final public class Node {
 
   // POS, sub-POS, cfrom ... etc, must be NULL terminated
   public String termInfo = null;
+  
+  // Additional Information
+  public String addInfo = null;
 
   public int begin = 0; // begining of position
   public int length = 0; // length of surface
@@ -151,6 +154,7 @@ final public class Node {
     rnext = null;
     surface = null;
     termInfo = null;
+    addInfo = null;
     begin = 0;
     length = 0;
     end = 0;
@@ -169,6 +173,7 @@ final public class Node {
     rnext = org.rnext;
     surface = org.surface;
     termInfo = org.termInfo;
+    addInfo = org.addInfo;
     begin = org.begin;
     length = org.length;
     end = org.end;
@@ -186,6 +191,12 @@ final public class Node {
       return null;
     }
   }
+  
+  /**
+   * get reading.
+   * 
+   * @return reading
+   */
   public String getReading() {
     if (termInfo == null || termInfo.length() == 0)
       return null;
@@ -196,6 +207,11 @@ final public class Node {
     return termInfo.substring(begin, end - 1);
   }
 
+  /**
+   * get pronunciation.
+   * 
+   * @return pronunciation
+   */
   public String getPronunciation() {
     if (termInfo == null || termInfo.length() == 0)
       return null;
@@ -204,6 +220,26 @@ final public class Node {
     int end = termInfo.length();
 
     return termInfo.substring(begin, end);
+  }
+  
+  /**
+   * get additional information.
+   * 
+   * @return additional information
+   */
+  public String getAddInfo() {
+  	if (addInfo == null) {
+  		return "";
+  	}
+  	return addInfo;
+  }
+  
+  /**
+   * get cost
+   * @return cost of this morpheme.
+   */
+  public int getCost() {
+  	return cost;
   }
 
   private int getFieldBegin(int pos) {

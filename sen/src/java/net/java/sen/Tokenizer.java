@@ -57,6 +57,7 @@ public abstract class Tokenizer {
     bosToken2 = dic.getBOSToken();
     eosToken = dic.getEOSToken();
     unknownToken = dic.getUnknownToken();
+    unknownToken.cost = 30000;
     loadConnectCost(connectFile);
   }
 
