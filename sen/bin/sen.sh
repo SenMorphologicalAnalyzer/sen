@@ -8,7 +8,7 @@ java -Dorg.apache.commons.logging.simplelog.log.net.java=info \
      -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog  \
      -Dsen.home=${SEN_HOME} \
      -classpath ${CLASSPATH} \
-     StreamTaggerDemo ${1+"$@"}
+     StringTaggerDemo ${1+"$@"}
 
 
 
