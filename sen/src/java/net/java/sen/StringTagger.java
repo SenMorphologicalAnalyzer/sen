@@ -64,6 +64,17 @@ public class StringTagger {
    * 
    * StringTagger instance is exsisted only one for each Locale.
    * 
+   * <pre>
+   *   StringTagger tagger = StringTagger.getInstance(Locale.JAPANESE);
+   *   Token[] token = tagger.analyze(s);
+   *   for (int i=0; i<token.length;i++){
+   *     Token t = token[i];
+   *     String pos = t.getPos();         // part of speech
+   *     String basic = t.getBasic();     // un-conjugate representation
+   *     String reading = t.getReading(); // reading 
+   *   }
+   * </pre>
+   * 
    * @param locale
    *          Locale to generate morphological analyzer.
    */
