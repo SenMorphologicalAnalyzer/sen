@@ -12,7 +12,7 @@
 
   <!-- begin initial environment -->
   <property name="name" value="sen"/>
-  <property name="version" value="1.1rc1"/>
+  <property name="version" value="1.1"/>
 
   <property name="sen.jar" value="sen.jar"/>
   <property name="src.dir" location="src/java"/>
@@ -79,10 +79,9 @@
     <copy todir="${build.classes}/net/java/sen/resources">
     	<fileset dir="${src.dir}/net/java/sen/resources" />
     </copy>
-    <jar jarfile="${build.lib}/${sen.jar}" basedir="${build.classes}" >
+    <jar jarfile="${lib.dir}/${sen.jar}" basedir="${build.classes}" >
       <include name="*/**" />
     </jar>
-    <copy file="${build.lib}/${sen.jar}" todir="${lib.dir}" />
   </target>
 
 
@@ -98,7 +97,7 @@
   	</copy>
 	<delete dir="${build.dest}/${name}-${version}/build" />
   	<copy todir="${build.dest}/${name}-${version}/lib"
-	      file="${build.lib}/${sen.jar}"/>
+	      file="${lib.dir}/${sen.jar}"/>
 
     <zip file="${build.dest}/${name}-${version}.zip" basedir="${build.dest}" >
       <include name="${name}-${version}/**" />
