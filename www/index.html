@@ -1,5 +1,269 @@
-<html>
-  <body>
-    This is the default project content.
-  </body>
+<!-- dummy comment for Mac IE -->
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1 Transitional//EN'
+'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='ja' lang='ja'>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+<title>Sen</title>
+<style>
+.command {
+  background-color: black;
+  color: white;
+}
+.source {
+  border-color: black;
+  border-width: 1pt;
+  border-style: solid;
+  background-color: white;
+}
+</style>
+<link rel=stylesheet href='/~tora/default.css' type='text/css' />
+</head>
+
+<body bgcolor="#ffe0c0">
+<h1>Sen(Java 形態素解析エンジン)</h1>
+
+<h2>Sen とは?</h2>
+Sen は、Java で実装された形態素解析器です。現在は、日本語しか使えませんが、文字の種類(日本語の場合、、カタカナ、漢字&平仮名、記号)を判別するTokenizerと形態素解析の辞書を用意すれば、他の言語でも利用可能です。また、Jakarta で開発されてる Java のインデックスサーチエンジン  <a href='http://jakarta.apache.org/lucene/'>Lucene </a> と組み合わせると、日本語の全文検索を行うことができるようになります。<br /><br />
+<p />
+
+<p>
+注:Sen は、<a href='http://cl.aist-nara.ac.jp/~taku-ku/'>工藤拓</a>さんによりオープンソース(LGPL)で開発されている次世代形態素解析器Mecab(旧ChaSenTNG)をJavaに移植したものです。
+</p>
+
+<h2>ライセンス</h2>
+LGPL(Lesser General Public License)です。sen-0.43まではGPLでしたが、利便性を考えて0.44からLGPLへ変更しました。
+ソフトウェアに組み込んで利用した場合でも、ソースを公開する必要はありません。ただし、Sen自身に改変を加えた場合は、改変を加えた部分を公開してください。
+
+<h2>動作確認済環境</h2>
+<ul>
+  <li>Linux (Debian GNU/Linuxで動作確認を行っていますが、他のディストリビューションでも動くと思います)</li>
+  <li>Windows XP</li>
+</ul>
+基本的に、Perl と Java が入っていれば、他の環境でも使えると思います。
+Windows では、cygwin 等が必要かも知れません。
+
+<h2>インストール</h2>
+<h3>ダウンロード</h3>
+<a href='sen-0.44.tgz'>sen-0.44.tgz </a>をダウンロード、適当なディレクトリに解凍します。
+
+<a name="make_dic" id="make_dic"></a>
+<h3>辞書作成</h3>
+ダウンロードしたら、まず、辞書を作成します。辞書の作成には、次のソフトウェアが必要となります。
+<ul>
+  <li>perl5.6以降</li>
+  <li>ant1.5以降</li>
+</ul>
+辞書を作成するには、dic ディレクトリに移動して、
+<table><tr><td class=command><pre>
+$ <b>ant</b>
+</pre></td></tr></table>
+とantを実行するだけです。antが自動的にIPADICの辞書ファイルをダウンロードし、Sen用の辞書を作成します。
+<p>
+Widowsで辞書を作成するには、プロパティperl.binに対して下記のようにperlの実行ファイルを絶対パスで指定します。
+<table><tr><td class=command><pre>
+$ <b>ant -Dperl.bin=C:\Perl\bin\perl.exe</b>
+</pre></td></tr></table>
+</p>
+
+<h4>注意事項</h4>
+Fire Wall 等があるため、プロキシの設定が必要な場合、次のようして、プロキシのホスト名とポート番号を指定して下さい。
+<table><tr><td class=command><pre>
+$ ant -Dproxy.host=proxy.hoehoe.jp -Dproxy.port=8080
+</pre></td></tr></table>
+Passive FTPを利用しなければならない環境では、ブラウザ等で<a href="http://chasen.aist-nara.ac.jp/stable/ipadic">NAIST<a>から、ipadic-2.5.0.tar.gz をダウンロードし、dic ディレクトリに置いてから、ant を実行して下さい。
+
+<h3>サンプルプログラム実行</h3>
+SEN_HOME環境変数をsenをインストールしたディレクトリに設定しbin ディレクトリでsen.shを実行するとデモが起動します。コンソールに文書を入力するように聞いてきますので、適当に文書を入力してみましょう。
+<table><tr><td class=command><pre>
+$ <b>export SEN_HOME=/usr/local/sen-0.8
+$ <b>cd /usr/local/sen-0.8/bin</b>
+$ <b>sh sen.sh</b>
+now loading dictionary...
+done.
+Please input Japanese sentence:
+<b>千と千尋の神隠しのDVDが発売されましたが、プレステ2では、うまく色が出ないので買いませんでした。</b>
+千      (千)    名詞-数(1,2,1)  セン    セン
+と      (と)    助詞-並立助詞(2,3,1)    ト      ト
+千尋    (千尋)  名詞-一般(3,5,2)        {センジン/チヒロ}       {センジン/チヒロ}
+の      (の)    助詞-連体化(5,6,1)      ノ      ノ
+神隠し  (神隠し)        名詞-一般(6,9,3)        カミガクシ      カミガクシ
+の      (の)    助詞-連体化(9,10,1)     ノ      ノ
+DVD     (DVD)   未知語(10,13,3) null    null
+が      (が)    助詞-格助詞-一般(13,14,1)       ガ      ガ
+発売    (発売)  名詞-サ変接続(14,16,2)  ハツバイ        ハツバイ
+さ      (する)  動詞-自立(16,17,1)      サ      サ
+れ      (れる)  動詞-接尾(17,18,1)      レ      レ
+まし    (ます)  助動詞(18,20,2) マシ    マシ
+た      (た)    助動詞(20,21,1) タ      タ
+が      (が)    助詞-接続助詞(21,22,1)  ガ      ガ
+、      (、)    記号-読点(22,23,1)      、      、
+プレステ        (プレステ)      未知語(23,27,4) null    null
+2       (2)     未知語(27,28,1) null    null
+で      (で)    助詞-格助詞-一般(28,29,1)       デ      デ
+は      (は)    助詞-係助詞(29,30,1)    ハ      ワ
+、      (、)    記号-読点(30,31,1)      、      、
+うまく  (うまく)        副詞-一般(31,34,3)      ウマク  ウマク
+色      (色)    名詞-一般(34,35,1)      {イロ/ショク}   {イロ/ショク}
+が      (が)    助詞-格助詞-一般(35,36,1)       ガ      ガ
+出      (出る)  動詞-自立(36,37,1)      デ      デ
+ない    (ない)  助動詞(37,39,2) ナイ    ナイ
+の      (の)    名詞-非自立-一般(39,40,1)       ノ      ノ
+で      (で)    助詞-格助詞-一般(40,41,1)       デ      デ
+買い    (買う)  動詞-自立(41,43,2)      カイ    カイ
+ませ    (ます)  助動詞(43,45,2) マセ    マセ
+ん      (ん)    助動詞(45,46,1) ン      ン
+でし    (です)  助動詞(46,48,2) デシ    デシ
+た      (た)    助動詞(48,49,1) タ      タ
+。      (。)    記号-句点(49,50,1)      。      。
+</pre></td></tr></table>
+左から、分割した形態素、形態素の基本形、品詞名(文字列中の開始位置、終了位置、形態素の長さ)、読み、発音を示しています。品詞を特定できない形態素の品詞名は、未知語となり、読みと発音はnullとなります。
+
+<h2>プログラミングガイド</h2>
+<p>
+Senをライブラリとして利用したい場合は、src/java ディレクトリにあるStringTaggerDemo.javaとStreamTagger.javaを参考にして下さい。
+基本的には、XXXTaggerクラスとTokenクラスを利用すればokです。例えば、次のようになります。
+</p>
+
+<pre class=source>
+String s = <入力文字列> ;
+//日本語用のタガー取得
+StringTagger tagger = StringTagger.getInstance(Locale.JAPANESE);
+// 形態素解析実行。tokenに形態素の情報を取得
+Token[] token = tagger.analyze(s);
+
+for(int i = 0; i < token.length; i++){
+  // tokenから形態素情報を取得
+  ...  
+}
+</pre>
+Tokenクラスの使い方は次の通りです。
+
+<table border=1 bgcolor=lightpink>
+<tr bgcolor=lightgreen>
+<th>メソッド名</th><th>返却値</th>
+</tr>
+
+<tr>
+<td>toString()</td><td>切り出された単語</td>
+</tr>
+
+<tr>
+<td>getBasicString()</td><td>基本形の文字列</td>
+</tr>
+
+<tr>
+<td>getPos()</td><td>品詞情報</td>
+</tr>
+
+<tr>
+<td>start()</td><td>単語の始まり位置</td>
+</tr>
+
+<tr>
+<td>end()</td><td>単語の終わり位置</td>
+</tr>
+
+<tr>
+<td>length()</td><td>単語の長さ</td>
+</tr>
+
+<tr>
+<td>getReading()</td><td>振り仮名</td>
+</tr>
+
+<tr>
+<td>getPronunciation()</td><td>発音</td>
+</tr>
+
+</table>
+
+<p>
+なお、辞書で定義されていない単語の品詞は、デフォルトでは、「未知語」に
+設定されています。未定義の単語の品詞を変更したい場合は、conf/sen.xmlを
+変更して下さい。
+</p>
+
+<h2>TODO(順不同)</h2>
+<ul>
+  <li>ドキュメント、マニュアル類</li>
+  <li>リファクタリング、コードのクリーンアップ(かなり実装はいい加減)</li>
+  <li>設定ファイルのバリデーション</li>
+</li>
+<!--
+  <li>文字の正規化処理(やらない)
+  <ul>
+    <li>カタカナ or 平仮名 + 濁点 -> 濁点付きカタカナ、平仮名</li>
+  </ul></li>
+-->
+</ul>
+
+<h2>その他</h2>
+<ul>
+  <li>長健太さんによる<a href="http://www.asahi-net.or.jp/~cs8k-cyu/chmap/index.html">Chmap(2ch各板不徹底図解)</a>でご利用頂いております。</li>
+  <li>辞書作成の Ant 用の build ファイルのオリジナルは、鰈崎義之さんが作成しました。</li>
+  <li>Sen のもととなった、ChaSenTNG は、<a href='http://cl.aist-nara.ac.jp/~taku-ku/'>工藤拓</a>さんが作成しました。</li>
+  <li>名前の由来は、ChaSen 程大げさなものを目指していないので、Cha を取って Sen と名付けました。その他に深い意味はありません。</li>
+  <li>Sen は、辞書へのアクセス時に、 JDK1.4 を利用しているときは MappedByteBuffer を用い、
+      JDK1.3以前のバージョンを利用しているときには、メモリ上に辞書を読む込むようになっています。
+      JDK1.3以前のバージョンをお使いの場合で、辞書をメモリ上に読み込みたくない場合は、JVM の引数で、-Dnet.java.sen.io.FileAccessor=net.java.sen.io.RandomAccessReader を指定して下さい。
+      処理速度は遅くなりますが、消費メモリは減ります。
+    <li>このソフトウェアは、Apache Software Foundationによって開発されたCommons Loggingを含んでいます。
+        (This product includes software developed by the Apache Software Foundation (http://www.apache.org/).)
+    </ul>
+    </li>
+    </li>
+</ul>
+
+<h2>変更点</h2>
+<h4>0.8(β1)</h4>
+<ul>
+<li>実際に採用事例が増えて来て、そこそこ実績が出て来たのでβリリースとした</li>
+<li>SenTokenizerをsenからlucene-jaに移しLuceneのコードを全て取り除いた</li>
+<li>パッケージ名をorg.debian.senからnet.java.senに変更した</li>
+<li>コスト計算のバグを修正した(thanx 原田昌紀さん)</li>
+<li>castorを不要にした</li>
+<li>senの設定ファイルsen.xmlに辞書の場所を相対パスで記述した場合、JavaVMを起動した
+    ディレクトリからの相対パスになっていた所をsen.homeプロパティからの相対パスにした。
+    これにより、一度sen.xmlを設定すれば任意のディレクトリで実行しても同じ動作が期待できる。</li>
+</ul>
+
+<h4>0.44</h4>
+<ul>
+<li>添付のLuceneを1.3にバージョンアップ</li>
+<li>ライセンスをGPLからLGPLへ変更</li>
+</ul>
+
+<h4>0.43</h4>
+<ul>
+  <li>辞書が正しく生成されておらず、形態素解析実行中にExceptionが発生しプログラムが途中で停止するバグを修正。</li>
+</ul>
+<h4>0.42</h4>
+<ul>
+  <li>漢字、平仮名、カタカナ、英数字以外の文字が入力されたときに正しく動作しないことがあるバグを修正(JapaneseTokenizer.javaにおけるOTHERの取扱を変更)</li>
+</ul>
+  <li>Tokenクラスに読みを取得するgetReadingと発音を取得するgetPronunciationメソッドを追加</li>
+  <li>平仮名、漢字の未知語が一文字づつ切り出されていたのを、ブロックで抽出するように変更(「ざざざ」→「ざ」×3の形態素として切り出されていたのを「ざざざ」とh一つの形態素で切り出されるようになる)。</li>
+<h4>0.41</h4>
+<ul>
+  <li>HALF_WIDTH クラスの文字が正しく処理できない問題を修正</li>
+  <li>StreamTaggerDemoをファイルから読み込んだテキストに対し、文字コードを指定して利用するように変更</li>
+</ul>
+<h4>0.40</h4>
+<ul>
+  <li>luceneのJSPのデモで日本語で検索できなバグを修正</li>
+  <li>luceneのデモで不正な文字コードを含む文書のインデックスを作成しよ
+  うとしたときに、強制終了していたが、続行するように変更</li>
+  <li>MorphologicalAnalyzerを廃止し、StringTaggerとStreamTaggerを用意
+  </li>
+  <li>内部的に大幅に変更。TokenizerとStringTaggerを変更すれば、他の言
+  語に対応可能に。</li>
+  <li>StringTaggerで、各言語毎にSingletonにできるように変更。</li>
+  <li>その他、コードのクリーンアップ等</li>
+</ul>
+<hr>
+<script src='/~tora/footer.js'></script>
+</body>
 </html>
