@@ -33,6 +33,7 @@ final public class Token {
   private String pos = null;
   private String pronunciation = null;
   private String basic = null;
+  private String cform = null;
   private String read = null;
   private String nodeStr = null;
   
@@ -132,6 +133,22 @@ final public class Token {
    */
   public void setBasicString(String basic) {
   	this.basic = basic;
+  }
+  
+  /**
+   * get conjugational form. This method is thread unsafe.
+   */
+  public String getCform() {
+    if (cform == null)
+      cform = node.getCform();
+    return cform;
+  }
+
+  /**
+   * set conjugational form. This method is thread unsafe.
+   */
+  public void setCform(String cform) {
+  	this.cform = cform;
   }
   
   /**

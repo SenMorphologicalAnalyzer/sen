@@ -38,6 +38,7 @@ import java.util.ResourceBundle;
 import java.util.Vector;
 
 import net.java.sen.CToken;
+import net.java.sen.util.CSVData;
 import net.java.sen.util.CSVParser;
 import net.java.sen.util.DoubleArrayTrie;
 
@@ -208,6 +209,8 @@ public class MkSenDic {
     // Step4. Reading Morpheme Information
     //
     log.info("(4/7): reading morpheme information ... ");
+    String t = null;
+    String[] csv = null;
     try {
       // writer for feature file.
       BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
@@ -227,12 +230,11 @@ public class MkSenDic {
                   new FileInputStream(args[custom_dic]), 
                                       rb.getString("dic.charset")));
       }
-      String t;
-      int line = 0;
-      
 
-      StringBuffer key_b = new StringBuffer();
-      StringBuffer pos_b = new StringBuffer();
+      int line = 0;
+
+      CSVData key_b = new CSVData();
+      CSVData pos_b = new CSVData();
 
       while (true) {
         t = dicStream.readLine();
@@ -252,25 +254,24 @@ public class MkSenDic {
           continue;
         }
         
-        String csv[] = DictionaryMaker.csv2strings(t);
+        CSVParser parser = new CSVParser(t);
+        csv = parser.nextTokens();
         if (csv.length < (pos_size + pos_start)) {
-          throw new RuntimeException("format error:" + line);
+          throw new RuntimeException("format error:" + t);
         }
 
-        key_b.setLength(0);
-        pos_b.setLength(0);
+        key_b.clear();
+        pos_b.clear();
         for (int i = pos_start; i < (pos_start + pos_size - 1); i++) {
           key_b.append(csv[i]);
-          key_b.append(',');
+          pos_b.append(csv[i]);
         }
 
         key_b.append(csv[pos_start + pos_size - 1]);
-        pos_b.append(key_b);
-        pos_b.append(',');
+        pos_b.append(csv[pos_start + pos_size - 1]);
 
         for (int i = pos_start + pos_size; i < (csv.length - 1); i++) {
           pos_b.append(csv[i]);
-          pos_b.append(',');
         }
         pos_b.append(csv[csv.length - 1]);
 
@@ -288,7 +289,8 @@ public class MkSenDic {
 
         byte b[] = pos_b.toString().getBytes(rb.getString("sen.charset"));
         offset += (b.length + 1);
-        bw.write(pos_b.toString(), 0, pos_b.length());
+        String pos_b_str = pos_b.toString(); 
+        bw.write(pos_b_str, 0, pos_b_str.length());
         //                bw.write(b, 0, b.length);
         bw.write(0);
         if (++di % 50000 == 0)
@@ -297,6 +299,7 @@ public class MkSenDic {
       bw.close();
       // ----end of writing feature.cha ----
     } catch (Exception e) {
+      log.error("Error: " + t);
       e.printStackTrace();
       System.exit(1);
     }

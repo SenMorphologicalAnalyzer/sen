@@ -21,6 +21,10 @@ package net.java.sen;
  *  
  */
 
+import java.io.IOException;
+
+import net.java.sen.util.CSVParser;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,6 +42,7 @@ final public class Node {
 
   // POS, sub-POS, cfrom ... etc, must be NULL terminated
   public String termInfo = null;
+  private String[] termInfoStringArray = null;
   
   // Additional Information
   public String addInfo = null;
@@ -134,13 +139,7 @@ final public class Node {
       return null;
     }
     log.debug("posInfo=" + termInfo);
-    for (int i = 0; i < 6; i++) {
-      while (termInfo.charAt(cnt++) != ',');
-    }
-    begin = cnt;
-    while (termInfo.charAt(cnt) != ',')
-      cnt++;
-    return termInfo.substring(begin, cnt);
+    return getField(6);
   }
 
   /**
@@ -193,6 +192,18 @@ final public class Node {
   }
   
   /**
+   * get conjugational form.
+   * 
+   * @return conjugational form
+   */
+  public String getCform() {
+    if (termInfo == null || termInfo.length() == 0)
+      return null;
+    
+    return getField(5);
+  }
+  
+  /**
    * get reading.
    * 
    * @return reading
@@ -201,10 +212,7 @@ final public class Node {
     if (termInfo == null || termInfo.length() == 0)
       return null;
 
-    int begin = getFieldBegin(7);
-    int end = getFieldBegin(8);
-
-    return termInfo.substring(begin, end - 1);
+    return getField(7);
   }
 
   /**
@@ -216,10 +224,7 @@ final public class Node {
     if (termInfo == null || termInfo.length() == 0)
       return null;
 
-    int begin = getFieldBegin(8);
-    int end = termInfo.length();
-
-    return termInfo.substring(begin, end);
+    return getField(8);
   }
   
   /**
@@ -242,19 +247,16 @@ final public class Node {
   	return cost;
   }
 
-  private int getFieldBegin(int pos) {
-    int cnt = 0;
-    int ptr = 0;
-
-    while (cnt < pos && ptr < termInfo.length()) {
-      if (termInfo.charAt(ptr++) == ',')
-        cnt++;
-    }
-
-    if (cnt != pos)
-      return -1;
-
-    return ptr++;
+  private String getField(int index) {
+  	if (termInfoStringArray == null) {
+  	  	try {
+			CSVParser parser = new CSVParser(termInfo);
+			termInfoStringArray = parser.nextTokens();
+		} catch (IOException e) {
+			log.error(e);
+			return null;
+		}
+  	}
+  	return termInfoStringArray[index];
   }
 }
-

@@ -21,11 +21,14 @@
 
 package net.java.sen.tools;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.TreeSet;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import net.java.sen.util.CSVParser;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -160,12 +163,18 @@ public class DictionaryMaker {
   }
 
   public int getDicId(String rule) {
-    String csv[] = csv2strings(rule);
-    String lex = csv[csv.length - 1];
-    if (isLexcalized.get(lex) != null) {
-      int ret = getDicIdNoCache(csv);
+  	CSVParser parser = new CSVParser(rule);
+  	String csv[] = null;
+  	try {
+  		csv = parser.nextTokens();
+  	} catch (IOException e) {
+  		throw new RuntimeException(e);
+  	}
+  	String lex = csv[csv.length - 1];
+  	if (isLexcalized.get(lex) != null) {
+  		int ret = getDicIdNoCache(csv);
       return ret;
-    } else {
+  	} else {
       String pos = removeEndField(rule);
 
       Object r = dic2IdHash.get(pos);
@@ -189,6 +198,7 @@ public class DictionaryMaker {
     return (Vector) idList.get(((Integer) rule2IdHash.get(rule)).intValue());
   }
 
+  /*
   public static String[] csv2strings(String csv) {
     StringTokenizer st = new StringTokenizer(csv, ",");
     int len = st.countTokens();
@@ -198,6 +208,7 @@ public class DictionaryMaker {
     }
     return tokenList;
   }
+  */
 
   private static String removeEndField(String str) {
     int field = 0;
