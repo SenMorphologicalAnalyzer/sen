@@ -11,9 +11,9 @@
   <property name="perl.bin" value="c:/usr/cygwin/bin/perl.exe"/>
 -->
   <property name="perl.bin" value="/usr/bin/perl"/>
-  <property name="ipadic2tng"  value="./ipadic2tng.pl"/>
+  <property name="ipa2mecab"  value="./ipa2mecab.pl"/>
   <property name="ipadic.home" value="http://chasen.aist-nara.ac.jp/stable/ipadic"/>
-  <property name="ipadic.version" value="2.5.0"/>
+  <property name="ipadic.version" value="2.6.0"/>
   <property name="ipadic.archive"  value="ipadic-${ipadic.version}.tar.gz"/>
   <property name="ipadic.dir"  value="ipadic-${ipadic.version}"/>
 
@@ -46,24 +46,29 @@
   <target name="prepare-dics0">
     <condition property="dics0.present">
       <and>
-        <available file="dic.sen"/>
-        <available file="connect.sen"/>
+        <available file="dic.csv"/>
+        <available file="connect.csv"/>
+      </and>
+    </condition>
+    <condition property="dics1.present">
+      <and>
+        <available file="ipadic-${ipadic.version}/Noun.dic"/>
       </and>
     </condition>
   </target>
 
-  <target name="prepare" depends="prepare-proxy,prepare-archive,prepare-dics0,prepare-dics" unless="ipadic.archive.present">
-<!--
-    <exec executable="wget">
-      <arg line="${ipadic.home}/${ipadic.archive}"/>
-    </exec>
--->
+  <target name="prepare" depends="download,melt" />
+   
 
+  <target name="download" depends="prepare-proxy,prepare-archive,prepare-dics0,prepare-dics" unless="ipadic.archive.present">
 <!--
     for proxy
     <setproxy socksproxyhost="proxyhost" proxyport="8080" />
 -->
     <get src="${ipadic.home}/${ipadic.archive}" dest="${ipadic.archive}" />
+  </target>
+
+  <target name="melt" depends="download,prepare-dics" unless="dics1.present">
     <gunzip src="${ipadic.archive}"/>
     <untar src="${ipadic.dir}.tar" dest="." />
     <delete file="${ipadic.dir}.tar"/>
@@ -72,6 +77,7 @@
   <target name="clean">
     <delete>
       <fileset dir="." includes="*.sen"/>
+      <fileset dir="." includes="*.csv"/>
     </delete>
     <delete dir="ipadic-${ipadic.version}"/>
     <delete file="${ipadic.archive}" />
@@ -79,7 +85,7 @@
 
   <target name="dics0" depends="prepare" unless="dics0.present">
     <exec executable="${perl.bin}">
-      <arg line="${ipadic2tng} ipadic-${ipadic.version}"/>
+      <arg line="${ipa2mecab} ipadic-${ipadic.version}"/>
     </exec>
   </target>
 

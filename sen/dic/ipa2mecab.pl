@@ -1,9 +1,11 @@
 #!/usr/bin/perl
 
+# IPA dic to MeCab Converter for ipadic-2.5.0 ipadic-2.5.1
+# $Id: ipa2mecab.pl.in,v 1.5 2003/04/14 15:15:36 taku-ku Exp $;
+
 my $PREFIX = shift (@ARGV) || ".";
 $PREFIX =~ s#/$##g;
 
-## sub routines
 sub strip
 {
     my $a = $_[0];
@@ -22,13 +24,22 @@ sub append
     return $a . $b;
 }
 
+sub get1st 
+{
+    my $s = $_[0];
+    if (defined $s && $s =~ /^{([^}]+)}([^\}]*)$/) {
+	return (split /\//, $1)[0] . $2;
+     } else {
+        return $s;
+     }
+}
+
 sub conv 
 {
     my $str   = $_[0];
     my @tmp   = split /,/, $str;
     my $ctype = $tmp[6];
 
-    # ³èÍÑ¤òÅ¸³«¤¹¤?É¬Í×¤¬Ìµ¤¤¤È¤­¤Ï, ¤½¤Î¤Þ¤Þ½ÐÎÏ    
     if (! defined $CTYPE{$ctype}) { 
 	return "$str\n";
 	next;
@@ -37,13 +48,12 @@ sub conv
     my $lex   = $tmp[0];
     my $base  = $tmp[8];
     my $read  = $tmp[9];
-    my $pron  = $tmp[10]; 
+    my $pron  = $tmp[10];
 
     my $lexs  = $lex;
     my $reads = $read;
     my $prons = $pron;
 
-    # ¸?´´¤À¤±»Ä¤¹
     my @list = @{$CTYPE{$ctype}};
     if ($list[0][1] ne "*") {
 	$lexs  = substr ($lex,  0, length ($lex)  - length($list[0][1]));
@@ -51,7 +61,6 @@ sub conv
 	$prons = substr ($pron, 0, length ($pron) - length($list[0][2]));
     }
 
-    # Å¸³«!
     my $result = "";
     for my $i (0..$#list) {
 	my $cform   = $list[$i][0];
@@ -59,19 +68,14 @@ sub conv
 	my $newread = &append ($reads, $list[$i][2]);
 	my $newpron = &append ($prons, $list[$i][2]);
 	next if (length ($newlex) <= 1);
-	$result .= "$newlex,@tmp[1],$tmp[2],$tmp[3],$tmp[4],$tmp[5],$tmp[6],$cform,$base,$newread,$newpron\n";
+	$result .= "$newlex,$tmp[1],$tmp[2],$tmp[3],$tmp[4],$tmp[5],$tmp[6],$cform,$base,$newread,$newpron\n";
     }
 
     return $result;
 }
 
-
-#########
-# main
-
-# connect.cha
 open (F, "$PREFIX/connect.cha") || die "Fatal: $PREFIX/connect.cha cannot open\n";
-open (S, "> connect.sen") || die "FATAL: connect.txt cannot open\n";
+open (S, "> connect.csv") || die "FATAL: connect.csv cannot open\n";
 while (<F>) {
     chomp;
 
@@ -82,7 +86,7 @@ while (<F>) {
     my @out;
     for (@tmp) {
 	my @pos;
-	if (/\(+([^\)]+)\)/) {
+	if (/\(+([^\(\)]+)\)/) {
 	    @pos = split / /, $1;
 	}
 
@@ -106,22 +110,19 @@ while (<F>) {
 	push @out, join ",", @pos;
     }
 
-    if (@out == 2) { 
-	@out = ("*,*,*,*,*,*,*", @out);
-    }
+    @out = ("*,*,*,*,*,*,*", @out) if (@out == 2);
 
     print S "\"$out[0]\",\"$out[1]\",\"$out[2]\",$score\n";
 }
 close (F);
 close (S);
 
-# cforms.cha ¤ÎÆÉ¤ß¤³¤ß
 my $ctype = "";
 my @CTYPE;
 open (F, "$PREFIX/cforms.cha") || die "Fatal: $PREFIX/cforms.cha cannot open\n";
 while (<F>) {
     chomp;
-    next if (/^;/ || /^$/ || /¸?´´/);
+    next if (/^;/ || /^$/ || /¸ì´´/);
     if (/^\((\S+)\s*$/) {
 	$ctype = $1;
     } elsif (/^\)\s*$/) {
@@ -133,10 +134,9 @@ while (<F>) {
 }
 close (F);
 
-# ¼­½ñ¤ÎÆÉ¤ß¤³¤ß
 opendir (DICDIR, $PREFIX) || die "FATAL: $PREFIX cannot open\n";
 my @dic = grep (/\.dic$/, readdir (DICDIR));
-open (S, "> dic.sen") || die "FATAL: dic.txt cannot open\n";
+open (S, "> dic.csv") || die "FATAL: dic.txt cannot open\n";
 
 for my $file (@dic) {
     print STDERR "$PREFIX/$file ...\n";
@@ -145,9 +145,9 @@ for my $file (@dic) {
 	chomp;
 	my $lex; 
 
-	if (/\(LEX \(([^ ]+) (\d+)/) {
-	    $lex = $1;
-	    $score = $2;
+	if (/\((LEX|¸«½Ð¤·¸ì) \(([^ ]+) (\d+)/) {
+	    $lex = $2;
+	    $score = $3;
 	}
 	next if (! $lex);    
 
@@ -156,11 +156,14 @@ for my $file (@dic) {
 	my $pos;
 	my $ctype;
 
-	$read  = $1 if (/\(READING ([^\)]+)/);
-	$pron  = $1 if (/\(PRON ([^\)]+)/);
-	$pos   = $1 if (/\(POS \(([^-\)]+)/);
-	$ctype = $1 if (/\(CTYPE ([^-\)]+)/);
-
+	$read  = $2 if (/\((READING|ÆÉ¤ß) ([^\)0-9]+)/);
+	$pron  = $2 if (/\((PRON|È¯²») ([^\)0-9]+)/);
+	$pos   = $2 if (/\((POS|ÉÊ»ì) \(([^-\)0-9]+)/);
+	$ctype = $2 if (/\((CTYPE|³èÍÑ·¿) ([^\)0-9]+)/);
+	
+	$read = &get1st ($read);
+	$pron = &get1st ($pron);
+	
 	my @posl = split / /, $pos;
 	my $pos1 = $posl[0] || "*";
 	my $pos2 = $posl[1] || "*";
