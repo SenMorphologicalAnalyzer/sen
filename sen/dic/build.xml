@@ -12,6 +12,7 @@
 -->
   <property name="perl.bin" value="/usr/bin/perl"/>
   <property name="ipa2mecab"  value="./ipa2mecab.pl"/>
+  <property name="compound"  value="./compound.pl"/>
   <property name="ipadic.home" value="http://chasen.aist-nara.ac.jp/stable/ipadic"/>
   <property name="ipadic.version" value="2.6.0"/>
   <property name="ipadic.archive"  value="ipadic-${ipadic.version}.tar.gz"/>
@@ -112,6 +113,42 @@
 -->
     </java>
   </target>
+
+  <target name="create-testdic" depends="dics0,create-compounddic" unless="dics.present" >
+    <java classname="net.java.sen.tools.MkSenDic"
+          fork="true"
+          maxmemory="140m">
+      <classpath>
+        <pathelement location="${sen.jar}"/>
+        <pathelement location="${commons-logging.jar}"/>
+        <pathelement location="${commons-logging-api.jar}"/>
+        <pathelement location="."/>
+        <pathelement location="../build"/>
+        <pathelement path="${java.class.path}"/>
+      </classpath>
+      <arg line="../src/test/custom_dic.csv" />
+    </java>
+   </target>
+  <target name="create-compounddic" >
+
+    <exec executable="${perl.bin}">
+      <arg line="${compound} ../src/test/dic"/>
+    </exec>
+
+    <java classname="net.java.sen.tools.MkCompoundTable"
+          fork="true"
+          maxmemory="140m">
+      <classpath>
+        <pathelement location="${sen.jar}"/>
+        <pathelement location="${commons-logging.jar}"/>
+        <pathelement location="${commons-logging-api.jar}"/>
+        <pathelement location="."/>
+        <pathelement location="../build"/>
+        <pathelement path="${java.class.path}"/>
+      </classpath>
+    </java>
+  </target>
+
 
   <target name="all" depends="clean,prepare,create"/>
 
