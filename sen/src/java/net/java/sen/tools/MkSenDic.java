@@ -24,7 +24,6 @@ package net.java.sen.tools;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -175,8 +174,9 @@ public class MkSenDic {
     }
 
     try {
-      DataOutput out = new DataOutputStream(new BufferedOutputStream(
-          new FileOutputStream(rb.getString("matrix_file"))));
+      DataOutputStream out = new DataOutputStream(new BufferedOutputStream(
+        new FileOutputStream(rb.getString("matrix_file"))));
+      System.out.println("size1 = " + size1 + "  size2 = " + size2 + "  size3 = " + size3);
       out.writeShort(size1);
       out.writeShort(size2);
       out.writeShort(size3);
@@ -187,6 +187,7 @@ public class MkSenDic {
             //            if (matrix[size3 * (size2 * i1 + i2) + i3] != default_cost) {
             //            }
           }
+      out.close();
     } catch (IOException e) {
       e.printStackTrace();
       System.exit(0);
