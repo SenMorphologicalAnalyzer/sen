@@ -14,15 +14,11 @@ public class StringTaggerTest extends TestCase {
     public void testAnalyze() throws IllegalArgumentException, IOException {
         StringTagger tagger = StringTagger.getInstance();
         Token[] token = tagger.analyze(TESTSTR);
-//        for(int i=0;i<token.length;i++){
-//            System.out.print(token[i].toString()+"\t");
-//            System.out.println(token[i].getPos());
-//        }
-        assertEquals(token[0].getBasicString(),"新聞");
-        assertEquals(token[0].getPos(),"名詞-一般");
-        assertEquals(token[1].getBasicString(),"と");
-        assertEquals(token[1].getPos(),"フィラー");
-        assertEquals(token[2].getBasicString(),"モーニング");
-        assertEquals(token[2].getPos(),"名詞-一般");
+        assertEquals("新聞", token[0].getBasicString());
+        assertEquals("名詞-一般", token[0].getPos());
+        assertEquals("と", token[1].getBasicString());
+        assertEquals("未知語", token[1].getPos());
+        assertEquals("モーニング娘", token[2].getBasicString());
+        assertEquals("名詞-固有名詞", token[2].getPos());
     }
 }

@@ -36,11 +36,12 @@ public class RemarkProcessorTest extends TestCase {
         assertEquals("after",token[2].toString());
         assertEquals(18,token[2].start());
         assertEquals(23,token[2].end());
-        
+        /*
         System.out.println("--------");
         for (int i = 0; i < token.length; i++) {
             System.out.println("="+token[i].toString()+":"+token[i].getPos()+token[i].start()+":"+token[i].end());
         }
+	*/
 
     }
 }
