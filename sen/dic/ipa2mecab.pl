@@ -6,6 +6,16 @@
 my $PREFIX = shift (@ARGV) || ".";
 $PREFIX =~ s#/$##g;
 
+sub escape
+{
+    my $s = $_[0];
+    if ($s =~ /[",]/) {
+	$s =~ s/"/""/g;
+        return "\"$s\"";
+    }
+    return $s;
+}
+
 sub strip
 {
     my $a = $_[0];
@@ -77,6 +87,7 @@ sub conv
 open (F, "$PREFIX/connect.cha") || die "Fatal: $PREFIX/connect.cha cannot open\n";
 open (S, "> connect.csv") || die "FATAL: connect.csv cannot open\n";
 while (<F>) {
+    next if (/^;/ || /^$/);
     chomp;
 
     s/ (\d+)\)//;
@@ -142,6 +153,7 @@ for my $file (@dic) {
     print STDERR "$PREFIX/$file ...\n";
     open (F, "$PREFIX/$file") || die "FATAL: $PREFIX/$file cannot open\n";
     while (<F>) {
+	next if (/^;/ || /^$/);
 	chomp;
 	my $lex; 
 
@@ -149,7 +161,7 @@ for my $file (@dic) {
 	    $lex = $2;
 	    $score = $3;
 	}
-	next if (! $lex);    
+	next if ($lex eq "");
 
 	my $read;
 	my $pron;
@@ -172,6 +184,17 @@ for my $file (@dic) {
 	$ctype ||= "*";
 	$pron  ||= $read;
 	$base  = $lex;
+
+        $lex = escape($lex);
+        $pos1 = escape($pos1);
+        $pos2 = escape($pos2);
+        $pos3 = escape($pos3);
+        $pos4 = escape($pos4);
+ 	$ctype = escape($ctype);
+ 	$base = escape($base);
+ 	$read = escape($read);
+ 	$pron = escape($pron);
+	
 	print S &conv ("$lex,$score,$pos1,$pos2,$pos3,$pos4,$ctype,*,$base,$read,$pron");
     }
     close (F);
