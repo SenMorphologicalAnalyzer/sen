@@ -23,8 +23,8 @@ package net.java.sen.tools;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.TreeSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -38,7 +38,7 @@ public class DictionaryMaker {
 
   public static boolean debug = false;
   // variation information is stored.
-  TreeSet ruleSet = new TreeSet();
+  LinkedHashSet ruleSet = new LinkedHashSet();
   // idList[ID] = ????
   public Vector idList = new Vector();
 
