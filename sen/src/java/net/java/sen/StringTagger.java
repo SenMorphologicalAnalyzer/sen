@@ -244,6 +244,7 @@ public class StringTagger {
             DocumentBuilder builder = factory.newDocumentBuilder();
             File cf = new File(confFile);
             String parent = cf.getParentFile().getParent();
+            if(parent==null)parent=".";
             Document doc = builder.parse(new InputSource(confFile));
             NodeList nl = doc.getFirstChild().getChildNodes();
             for (int i = 0; i < nl.getLength(); i++) {

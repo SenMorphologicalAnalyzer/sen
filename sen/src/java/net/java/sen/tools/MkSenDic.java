@@ -215,13 +215,21 @@ public class MkSenDic {
               .getString("sen.charset")));
 
       log.info("load dic: "+rb.getString("text_dic_file"));
-      BufferedReader dicStream = new BufferedReader(new InputStreamReader(
-              new FileInputStream(rb.getString("text_dic_file")), rb
-              .getString("dic.charset")));
-
+      BufferedReader dicStream = null;
+      int custom_dic = -1;
+      if(args.length==0) {
+          dicStream = new BufferedReader(new InputStreamReader(
+                  new FileInputStream(rb.getString("text_dic_file")), rb
+                  .getString("dic.charset")));
+      } else {
+          custom_dic=0;
+          dicStream = new BufferedReader(new InputStreamReader(
+                  new FileInputStream(args[custom_dic]), 
+                                      rb.getString("dic.charset")));
+      }
       String t;
       int line = 0;
-      int custum_dic = -1;
+      
 
       StringBuffer key_b = new StringBuffer();
       StringBuffer pos_b = new StringBuffer();
@@ -230,15 +238,15 @@ public class MkSenDic {
         t = dicStream.readLine();
         if (t==null) {
           dicStream.close();
-          custum_dic++;
-          if (args.length==custum_dic) {
+          custom_dic++;
+          if (args.length==custom_dic) {
             break;
-        } else {
+          } else {
           // read custum dictionary
           log.info("load dic: "+"args[custum_dic]");
           dicStream = new BufferedReader(
                 new InputStreamReader(
-                  new FileInputStream(args[custum_dic]),
+                  new FileInputStream(args[custom_dic]),
    								rb.getString("dic.charset")));
           }
           continue;
