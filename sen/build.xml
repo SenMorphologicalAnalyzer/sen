@@ -82,6 +82,7 @@
     <jar jarfile="${build.lib}/${sen.jar}" basedir="${build.classes}" >
       <include name="*/**" />
     </jar>
+    <copy file="${build.lib}/${sen.jar}" todir="${lib.dir}" />
   </target>
 
 

@@ -127,6 +127,7 @@
         <pathelement location="../build"/>
         <pathelement path="${java.class.path}"/>
       </classpath>
+      <jvmarg line="-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog -Dorg.apache.commons.logging.simplelog.log.net.java=info"/>
       <arg line="../src/test/custom_dic.csv" />
     </java>
    </target>
