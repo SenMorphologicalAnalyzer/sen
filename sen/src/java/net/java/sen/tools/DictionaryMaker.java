@@ -22,7 +22,7 @@
 package net.java.sen.tools;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -35,7 +35,7 @@ public class DictionaryMaker {
 
   public static boolean debug = false;
   // variation information is stored.
-  HashSet ruleSet = new HashSet();
+  TreeSet ruleSet = new TreeSet();
   // idList[ID] = ????
   public Vector idList = new Vector();
 
