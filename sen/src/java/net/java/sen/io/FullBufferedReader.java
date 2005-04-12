@@ -34,9 +34,14 @@ public class FullBufferedReader implements FileAccessor {
 
   public FullBufferedReader(File file) throws IOException {
     buf = new byte[(int) file.length()];
-    InputStream is = new FileInputStream(file);
-    is.read(buf);
-    is.close();
+    InputStream is = null;
+    try {
+        is = new FileInputStream(file);
+        is.read(buf);
+    } finally {
+        if(is!=null)
+            is.close();
+    }
   }
 
   public void seek(int pos) throws IOException {

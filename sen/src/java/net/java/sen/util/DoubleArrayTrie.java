@@ -50,10 +50,16 @@ public class DoubleArrayTrie {
     long start = System.currentTimeMillis();
     File file= new File(fileName);
     array = new int[(int)(file.length() / 4)];
-    DataInputStream is = new DataInputStream
-      (new BufferedInputStream(new FileInputStream(file), BUF_SIZE));
-    for (int i = 0 ; i < array.length ; i++) {
-      array[i] = is.readInt();
+    DataInputStream is = null;
+    try {
+        is = new DataInputStream
+        (new BufferedInputStream(new FileInputStream(file), BUF_SIZE));
+        for (int i = 0 ; i < array.length ; i++) {
+            array[i] = is.readInt();
+        }
+    } finally {
+        if(is!=null)
+            is.close();
     }
     log.info("loaded time = " + (((double)(System.currentTimeMillis()- start))/1000) + "[ms]");
   }
@@ -371,13 +377,20 @@ public class DoubleArrayTrie {
 
   public void save(String file) throws IOException {
     long start = System.currentTimeMillis();
-    DataOutputStream out = new DataOutputStream
-      (new BufferedOutputStream(new FileOutputStream(file)));
-    int dsize = alloc_size << 1;
-    for (int i=0; i < dsize; i++) {
-      out.writeInt(array[i]);
+    DataOutputStream out = null;
+    
+    try {
+        out = new DataOutputStream
+        (new BufferedOutputStream(new FileOutputStream(file)));
+        int dsize = alloc_size << 1;
+        for (int i=0; i < dsize; i++) {
+            out.writeInt(array[i]);
+        }
+        out.close();
+    } finally {
+        if(out!=null)
+            out.close();
     }
-    out.close();
     log.info("save time = " +
          (((double)(System.currentTimeMillis()- start))/1000) + "[s]");
   }

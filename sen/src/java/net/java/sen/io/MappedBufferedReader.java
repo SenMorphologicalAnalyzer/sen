@@ -27,8 +27,6 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
 public class MappedBufferedReader implements FileAccessor {
-  byte buf[];
-  int pos = 0;
   long length = 0;
   MappedByteBuffer map = null;
   FileInputStream fis = null;

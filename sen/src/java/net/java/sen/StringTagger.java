@@ -64,7 +64,6 @@ public class StringTagger {
     private static Log log = LogFactory.getLog(StringTagger.class);
     private static HashMap hash = new HashMap();
     private Viterbi viterbi = null;
-    private Node node = null;
     Token[] token = null;
     int cnt = 0;
     private static StringTagger tagger = null;

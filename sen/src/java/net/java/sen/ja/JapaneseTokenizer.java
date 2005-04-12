@@ -27,12 +27,12 @@ import net.java.sen.Node;
 import net.java.sen.Tokenizer;
 
 public class JapaneseTokenizer extends Tokenizer {
-  final int OTHER = 0x80;
-  final int SPACE = 0x81;
-  final int KANJI = 0x82;
-  final int KATAKANA = 0x83;
-  final int HIRAGANA = 0x84;
-  final int HALF_WIDTH = 0x85;
+  static final int OTHER = 0x80;
+  static final int SPACE = 0x81;
+  static final int KANJI = 0x82;
+  static final int KATAKANA = 0x83;
+  static final int HIRAGANA = 0x84;
+  static final int HALF_WIDTH = 0x85;
 
   public JapaneseTokenizer(String tokenFile, String doubleArrayFile,
       String posInfoFile, String connectFile, String charset)
