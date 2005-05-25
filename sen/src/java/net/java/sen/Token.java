@@ -1,10 +1,10 @@
 /*
  * Token.java - Token which is used at Viterbi
- * 
+ *
  * Copyright (C) 2001, 2002 Taku Kudoh, Takashi Okamoto
  * Taku Kudoh <taku-ku@is.aist-nara.ac.jp>
  * Takashi Okamoto <tora@debian.org>
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,7 +19,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  * USA
- * 
+ *
  */
 
 package net.java.sen;
@@ -36,7 +36,8 @@ final public class Token {
   private String cform = null;
   private String read = null;
   private String nodeStr = null;
-  
+  private String termInfo = null;
+
   private String addInfo = null;
   private int cost = -1;
   private int start = -1;
@@ -49,7 +50,7 @@ final public class Token {
     node = n;
     pos = node.getPos();
   }
-  
+
   /**
    * constructor.
    */
@@ -71,7 +72,7 @@ final public class Token {
   public void setStart(int s) {
   	this.start = s;
   }
-  
+
   /**
    * get end index of this token.
    */
@@ -98,10 +99,10 @@ final public class Token {
   		this.node.length = l;
   	}
   }
-  
+
   /**
    * get part of speech.
-   * 
+   *
    * @return part of speech which represents this token.
    */
   public String getPos() {
@@ -110,7 +111,7 @@ final public class Token {
 
   /**
    * set part of speech.
-   * 
+   *
    * @pos part of speech.
    */
   public void setPos(String pos) {
@@ -119,7 +120,7 @@ final public class Token {
 
   /**
    * get un-conjugate string. This method is thread unsafe.
-   * 
+   *
    * @return un-conjugate representation for morpheme.
    */
   public String getBasicString() {
@@ -134,7 +135,7 @@ final public class Token {
   public void setBasicString(String basic) {
   	this.basic = basic;
   }
-  
+
   /**
    * get conjugational form. This method is thread unsafe.
    */
@@ -150,7 +151,7 @@ final public class Token {
   public void setCform(String cform) {
   	this.cform = cform;
   }
-  
+
   /**
    * get reading. This method is thread unsafe.
    */
@@ -166,7 +167,7 @@ final public class Token {
   public void setReading(String read) {
   	this.read = read;
   }
-  
+
   /**
    * get pronunciation. This method is thread unsafe.
    */
@@ -182,7 +183,7 @@ final public class Token {
   public void setPronunciation(String pronunciation) {
   	this.pronunciation = pronunciation;
   }
-  
+
   /**
    * get surface. This method is thread unsafe.
    */
@@ -198,7 +199,7 @@ final public class Token {
   public void setSurface(String surface) {
   	nodeStr = surface;
   }
-  
+
   /**
    * get cost. This method is thread unsafe.
    */
@@ -208,14 +209,14 @@ final public class Token {
   	}
   	return cost;
   }
-  
+
   /**
    * set cost. This method is thread unsafe.
    */
   public void setCost(int cost) {
   	this.cost = cost;
   }
-  
+
   /**
    * get additional information. This method is thread unsafe.
    */
@@ -225,21 +226,31 @@ final public class Token {
   	}
   	return addInfo;
   }
-  
+
   /**
    * set additional information. This method is thread unsafe.
    */
   public void setAddInfo(String addInfo) {
-  	this.addInfo = addInfo;
+    this.addInfo = addInfo;
   }
-  
+
   /**
    * get termInfo. This method is thread unsafe.
    */
   public String getTermInfo() {
-  	return node.termInfo;
+    if (termInfo == null) {
+        termInfo = node.termInfo;
+    }
+  	return termInfo;
   }
-  
+
+  /**
+   * set termInfo. This method is thread unsafe.
+   */
+  public void setTermInfo(String termInfo) {
+    this.termInfo = termInfo;
+  }
+
   /**
    * get string representation. This method is thread unsafe.
    */
