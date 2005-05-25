@@ -82,7 +82,8 @@ public class CompoundWordPostProcessor implements PostProcessor {
 				newToken.setCform(getField(termInfo, 7));
                 newToken.setBasicString(getField(termInfo, 8));
 				newToken.setReading(getField(termInfo, 9));
-				newToken.setPronunciation(getField(termInfo, 10));
+                newToken.setPronunciation(getField(termInfo, 10));
+                newToken.setTermInfo(termInfo);
 				newToken.setCost(tokens[i].getCost());
 				if (getField(termInfo, 11).equals("-")) {
 					newToken.setAddInfo("p=" + tokens[i].getPos());
