@@ -75,6 +75,8 @@ public class RemarkPreProcessor implements PreProcessor {
                         token.setReading(tokenStr);
                         token.setCost(0);
                         token.setAddInfo("");
+                        token.setCform("*");
+                        token.setTermInfo("");
                         addToTokenList(tokenList, token);
                     } else {
                         count = input.length();
