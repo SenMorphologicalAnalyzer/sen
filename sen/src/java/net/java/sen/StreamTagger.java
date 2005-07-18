@@ -56,7 +56,7 @@ public class StreamTagger {
   private Token[] token;
   private boolean complete = false;
   private Reader reader;
-
+  private int lastReadOffset;
 
   /**
    * Construct new StreamTagger. Currently only support Locale.JAPANESE.
@@ -71,6 +71,7 @@ public class StreamTagger {
   IllegalArgumentException {
       stringTagger = StringTagger.getInstance(locale);
       this.reader = reader;
+      this.lastReadOffset = 0;
   }
 
   /**
@@ -80,6 +81,7 @@ public class StreamTagger {
      IllegalArgumentException {
       stringTagger = StringTagger.getInstance();
       this.reader = reader;
+      this.lastReadOffset = 0;
   }
 
   /**
@@ -89,6 +91,7 @@ public class StreamTagger {
   	IllegalArgumentException {
       stringTagger = StringTagger.getInstance(senConfig);
       this.reader = reader;
+      this.lastReadOffset = 0;
   }
 
   /**
@@ -107,6 +110,13 @@ public class StreamTagger {
       } while (token == null);
       cnt = 0;
 
+      // Update the start offsets
+      if (token != null) {
+        for (int n = 0; n < token.length; n++) {
+          token[n].setStart(token[n].start() + this.lastReadOffset);
+        }
+      }
+      this.lastReadOffset += i;
     }
 
     // when this is happend?
@@ -159,6 +169,14 @@ public class StreamTagger {
         token = stringTagger.analyze(new String(buffer, 0, i));
       } while (token == null);
       cnt = 0;
+
+      // Update the start offsets
+      if (token != null) {
+        for (int n = 0; n < token.length; n++) {
+          token[n].setStart(token[n].start() + this.lastReadOffset);
+        }
+      }
+      this.lastReadOffset += i;
 
     }
     return token[cnt++];
