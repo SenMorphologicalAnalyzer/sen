@@ -47,7 +47,7 @@ public class CompositPostProcessor implements PostProcessor {
             Set ruleSet = new HashSet();
             String first = st.nextToken();
             if (!st.hasMoreTokens()) {
-                // 1個しか無い場合は、連結品詞名であり、構成品詞名でもある
+                // 1????????A??????????????????
                 removeFromOtherRules(first);
                 ruleSet.add(first);
                 rules.add(new Rule(first, ruleSet));
@@ -110,6 +110,9 @@ public class CompositPostProcessor implements PostProcessor {
             }
             currentRule = null;
             newTokens.add(tokens[i]);
+        }
+        if (prevToken != null) {
+            newTokens.add(prevToken);
         }
         Token[] newTokenArray = new Token[newTokens.size()];
         newTokens.toArray(newTokenArray);
