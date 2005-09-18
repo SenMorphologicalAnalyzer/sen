@@ -132,13 +132,11 @@ public class StreamTagger {
 
     while ((pos < BUFFER_SIZE) && (!complete)
         && ((res = reader.read(buffer, pos, 1)) != -1)) {
-      switch (Character.getType(buffer[pos])) {
-        case Character.OTHER_PUNCTUATION :
-          if (pos == 0)
-            continue;
-          return pos + 1;
-        default :
-          pos++;
+	if ((Character.getType(buffer[pos]) == Character.OTHER_PUNCTUATION) &&
+	    (pos > 0)) {
+	    return pos + 1;
+	} else {
+	    pos++;
       }
     }
 
