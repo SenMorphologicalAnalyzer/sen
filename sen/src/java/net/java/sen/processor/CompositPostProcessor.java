@@ -96,6 +96,7 @@ public class CompositPostProcessor implements PostProcessor {
                     merge(prevToken, tokens[i], currentRule.getPos());
                     if (i == tokens.length - 1) {
                         newTokens.add(prevToken);
+                        prevToken = null;
                     }
                     continue;
                 }
