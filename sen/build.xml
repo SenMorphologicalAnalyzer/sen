@@ -12,7 +12,7 @@
 
   <!-- begin initial environment -->
   <property name="name" value="sen"/>
-  <property name="version" value="1.2.2"/>
+  <property name="version" value="1.2.2.1"/>
 
   <property name="sen.jar" value="sen.jar"/>
   <property name="src.dir" location="src/java"/>
